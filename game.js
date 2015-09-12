@@ -39,7 +39,7 @@ function newFood() {
 	var color='red';
 	var badLocation=true;
 	while(badLocation){
-		var foodPosition = Math.floor(Math.random()*65);
+		var foodPosition = Math.floor(Math.random()*399);
 		for(var i=0;i<snakePosition.length;i++){
 			if (snakePosition[i] == foodPosition){
 				console.log("Apples position inside snake");
