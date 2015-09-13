@@ -6,11 +6,16 @@ module.exports = function(app, connection) {
 		// tässä määritellään serverin palautukset, kun yritetty rekisteröityä
 		var registermessage = "Thank you, you have registered!";
 		var registermessage2 = "Please select another username!";
+		var registermessage3 = "Username / password can't be empty!";
 
 		var nicktaken = false;
 		console.log("got data!");
 		var uname = req.body.username;
 		var password = req.body.password;
+			if (password == "" || uname == "") {
+		res.send(registermessage3);
+		res.end(); }
+		else {
 		var queryString = "SELECT username FROM users WHERE username='" + uname + "'";
 		console.log(queryString);
 		connection.query(queryString, function(err, rows, fields) {
@@ -33,6 +38,7 @@ module.exports = function(app, connection) {
 	});
 	}
 	});
+	}
 	})
 
 };
