@@ -6,9 +6,10 @@ var global = this;
 // Params: array of positions, length, color
 // Return: nothing
 
-function Worm(startPosX, startPosY, length, color) {
+function Worm(gameObj, startPosX, startPosY, length, color) {
 
-	that = this;
+	that = this; // doesn't work with var that
+	that.gameObj = gameObj;
 	that.position = [];
 	that.length = length;
 	that.color = color;
@@ -28,8 +29,9 @@ function Worm(startPosX, startPosY, length, color) {
 // Return: nothing
 
 Worm.prototype.init = function() {
+
 	for(var i=0;i<that.length;i++) {
-		this.position.push(that.startPosX+'_'+(that.startPosY+i));
+		that.position.push(that.startPosX+'_'+(that.startPosY+i));
 	}
 };
 
@@ -39,8 +41,8 @@ Worm.prototype.init = function() {
 
 Worm.prototype.draw = function() {
 
-	this.position.forEach(function(pos) {
-		document.getElementById(pos).style.backgroundColor = that.color;
+	that.position.forEach(function(pos) {
+		that.gameObj.drawToBoard(pos, that.color);
 	});
 };
 
@@ -78,6 +80,9 @@ var GameBoard = function(width, height) {
 };
 
 
+/* ==================================================================== */
+
+
 // ----- Class: Game -----
 //
 
@@ -85,9 +90,11 @@ var GameBoard = function(width, height) {
 // Params: nothing
 // Returns: nothing
 
-var Game = function() {
+function Game() {
+
 	// place worms to the game
-	var worm1 = new Worm(global.width/2, global.height/2, 5, 'blue');
+	var worm1 = new Worm(this, global.width/2, global.height/2, 5, 'blue');
+
 }
 
 
@@ -95,11 +102,17 @@ var Game = function() {
 // Params: posX, posY, color
 // Returns: nothing
 
+Game.prototype.drawToBoard = function(pos, color) {
+	document.getElementById(pos).style.backgroundColor = color;
+};
+
+/*
 Game.prototype.drawToBoard = function(posX, posY, color) {
 
 	var pos = posX+'_'+posY;
-	document.getElementById(pos.style.backgroundColor) = color;
+	document.getElementById(pos).style.backgroundColor = color;
 };
+*/
 
 
 // -------------------------------------------

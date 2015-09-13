@@ -31,7 +31,7 @@
 
 ##### Documentation
 
-* If we write documentation in english, it's better, as finnish is understood only 0,2‰ of humans on this planet
+* If we write documentation in english, it's better, as finnish is understood only 0,75‰ of humans on this planet
 
 
 ##### Files and folders
