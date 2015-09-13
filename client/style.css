@@ -1,14 +1,23 @@
-table, td, tr {
-	border: 1px solid green;
+#gameboard div {
 	padding: 0px;
+	border: 1px solid green;
+}
+
+#gameboard {
+	display: table;
 	margin: auto;
 }
 
-td {
+#gameboard .row {
+	display: table-row;
+}
+
+#gameboard .cell {
+	display: table-cell;
 	width: 15px;
 	height: 15px;
 }
 
-td:hover {
+#gameboard .cell:hover {
 	background-color: red;
-	}
+}

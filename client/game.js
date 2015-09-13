@@ -1,39 +1,52 @@
 var snakePosition = [];
 
-function startGame() {
+function startGame(width, height) {
+	
+	this.height = height;
+	this.width = width;
+
 	console.log("startGame function called");
-	initGameboard(20,20);
-	drawWorm();
-	newFood();
+	
+	initGameboard(width, height);
+	
+	drawWorm({
+		'length': 5,
+		'color': 'blue',
+		'startPosX': width/2,
+		'startPosY': height/2
+	});
+	//newFood();
 }
 
-function initGameboard(height,width) {
+function initGameboard(width, height) {
 	console.log("initGameboard");
 
-	var gameboard = '<table id="gameboard">';
+	var gameboard = '<div id="gameboard">';
 	for(var i=0;i<height;i++) {
-		gameboard+='<tr>';
+		gameboard+='<div class="row">';
 		for(var j=0;j<width;j++) {
-			var id=(j+(i*height));
-			var grid = '<td id="' + id + '"title="' + id + '"></td>';
+			var id=j+'_'+i;
+			var grid = '<div id="' + id + '"title="' + id + '" class="cell"></div>';
 			gameboard+=grid;
 		}
-		gameboard += '</tr>';
+		gameboard += '</div>';
 	}
-	gameboard+='</table>';
+	gameboard+='</div>';
 	document.getElementById('gameboard').innerHTML = gameboard;
 }
 
-function drawWorm() {
-	var length=5;
-	var color='blue';
-	var startPosition = 62;
 
-for(var i=0;i<length;i++){
-	snakePosition.push(startPosition+i);
-	document.getElementById(startPosition+i).style.backgroundColor = color;
+// Draws the initial worm
+// Array of params: int length, string color, int startPosX, int startPosY
+
+function drawWorm(myWorm) {
+
+	for(var i=0;i<myWorm.length;i++) {
+	snakePosition.push(myWorm.startPosX+'_'+(myWorm.startPosY+i));
+	document.getElementById(myWorm.startPosX+'_'+(myWorm.startPosY+i)).style.backgroundColor = myWorm.color;
 	}	
 }
+
 
 function newFood() {
 	var color='red';
