@@ -1,52 +1,110 @@
-var snakePosition = [];
+var global = this;
 
-function startGame(width, height) {
-	
-	this.height = height;
-	this.width = width;
+// ----- Class: Worm -----
 
-	console.log("startGame function called");
-	
-	initGameboard(width, height);
-	
-	drawWorm({
-		'length': 5,
-		'color': 'blue',
-		'startPosX': width/2,
-		'startPosY': height/2
-	});
-	//newFood();
+// Construtor
+// Params: array of positions, length, color
+// Return: nothing
+
+function Worm(startPosX, startPosY, length, color) {
+
+	that = this;
+	that.position = [];
+	that.length = length;
+	that.color = color;
+	that.startPosX = startPosX;
+	that.startPosY = startPosY;
+
+	// generate initial worm
+	this.init();
+
+
+	// draw the worm
+	this.draw();
 }
 
-function initGameboard(width, height) {
-	console.log("initGameboard");
+// Method: init - generates initial worm
+// Params: nothing
+// Return: nothing
 
-	var gameboard = '<div id="gameboard">';
-	for(var i=0;i<height;i++) {
-		gameboard+='<div class="row">';
-		for(var j=0;j<width;j++) {
-			var id=j+'_'+i;
-			var grid = '<div id="' + id + '"title="' + id + '" class="cell"></div>';
-			gameboard+=grid;
-		}
-		gameboard += '</div>';
+Worm.prototype.init = function() {
+	for(var i=0;i<that.length;i++) {
+		this.position.push(that.startPosX+'_'+(that.startPosY+i));
 	}
-	gameboard+='</div>';
+};
+
+// Method: draw - draws worm to the gameboard
+// Params: nothing
+// Return: nothing
+
+Worm.prototype.draw = function() {
+
+	this.position.forEach(function(pos) {
+		document.getElementById(pos).style.backgroundColor = that.color;
+	});
+};
+
+
+/* ==================================================================== */
+
+
+// ----- Class: GameBoard -----
+
+// Constructor - draws game board
+// Params: width, height (of game board)
+
+var GameBoard = function(width, height) {
+
+	global.width = width;
+	global.height = height;
+
+		gameboard = '<div id="gameboard">';
+
+		for(var y=0;y<height;y++) {
+			gameboard+='<div class="row">';
+			for(var x=0;x<width;x++) {
+				var id=x+'_'+y;
+				var grid = '<div id="' + id + '"title="' + id + '" class="cell"></div>';
+				gameboard+=grid;
+			}
+			gameboard += '</div>';
+		}
+
+		gameboard+='</div>';
+
+
 	document.getElementById('gameboard').innerHTML = gameboard;
+
+};
+
+
+// ----- Class: Game -----
+//
+
+// Constructor - launches the game session
+// Params: nothing
+// Returns: nothing
+
+var Game = function() {
+	// place worms to the game
+	var worm1 = new Worm(global.width/2, global.height/2, 5, 'blue');
 }
 
 
-// Draws the initial worm
-// Array of params: int length, string color, int startPosX, int startPosY
+// Method: drawToBoard - draws a single tile of board
+// Params: posX, posY, color
+// Returns: nothing
 
-function drawWorm(myWorm) {
+Game.prototype.drawToBoard = function(posX, posY, color) {
 
-	for(var i=0;i<myWorm.length;i++) {
-	snakePosition.push(myWorm.startPosX+'_'+(myWorm.startPosY+i));
-	document.getElementById(myWorm.startPosX+'_'+(myWorm.startPosY+i)).style.backgroundColor = myWorm.color;
-	}	
-}
+	var pos = posX+'_'+posY;
+	document.getElementById(pos.style.backgroundColor) = color;
+};
 
+
+// -------------------------------------------
+
+// TODO
 
 function newFood() {
 	var color='red';
