@@ -1,4 +1,4 @@
-# Matopeli_vsk_ryhma6
+# Prototype of a multiplayer worm game
 
 
 
@@ -10,7 +10,7 @@
 
 3. In command prompt, change directory to the folder that contains project files and give command: npm install. This will load all dependencies, if some doesn't exist already.
 
-4. Create a mysql user and password. Create database and tables with sql/matopeli.sql, for example on command prompt: mysql -uUSERNAME -pPASSWORD < wormgame.sql
+4. Create a mysql user and password. Create database and tables with sql/wormgame.sql, for example on command prompt: mysql -uUSERNAME -pPASSWORD < wormgame.sql
 
 5. Put your mysql username, password, hostname and database name to the file: server/dbconfig.js
 
