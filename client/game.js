@@ -1,15 +1,107 @@
 var global = this;
 
+
+/* ==================================================================== */
+
+
+// ----- Class: Game -----
+
+
+// Constructor - prepares and makes the game
+// Params: width, height (of initial(!) game board, can be changed later upon user selection)
+// Returns: nothing
+
+function Game(width, height) {
+
+	// Scope of the game
+	scope = this;
+
+	// Global variables for height and width
+	global.width = width;
+	global.height = height;
+	global.gameboardColor = 'white';
+
+
+	// --- Method inside constructor ---
+
+	// Method: moveHere - sets target for a worm
+	// Params: target (id of div)
+	// Return: nothing
+
+	//NOTE: must be global in order to work with gameboard generation script
+	global.moveHere = function(target) {
+		global.target = target;
+	}
+
+
+	// Method: startGame - draws worm to the gameboard
+	// Params: nothing
+	// Return: nothing
+
+	// NOTE: must be inside constructor and before startGame trigger in order to work
+	this.startGame = function() { 
+		var worm1 = new Worm(scope, global.width/2, global.height/2, 5, 'blue', 400);
+	}	
+
+
+	// Method: generateGameboard - draws the game board
+	// Params: width, height (of game board)
+	// Return: nothing
+
+	// NOTE: must be inside constructor and before called in order to work
+	this.generateGameboard = function() { 
+
+		gameboard = '<div id="gameboard">';
+
+		for(var y=0;y<height;y++) {
+			gameboard+='<div class="row">';
+			for(var x=0;x<width;x++) {
+				var id=x+'_'+y;
+				var id_hipsuilla="'"+id+"'"; // using event listener for mouse clicks would require a totally different gameboard generation script
+				var grid = '<div id="' + id + '"title="' + id + '" class="cell" onclick="moveHere('+id_hipsuilla+');"></div>';
+				gameboard+=grid;
+			}
+			gameboard += '</div>';
+		}
+
+		gameboard+='</div>';
+
+		document.getElementById('gameboard').innerHTML = gameboard;
+	}
+
+
+	// Method: drawToBoard - draws a single tile of board
+	// Params: pos (position; id of div)
+	// Returns: nothing
+
+	this.drawToBoard  = function(pos, color) { 
+		document.getElementById(pos).style.backgroundColor = color;
+	}
+
+
+	// --- Other constructor tasks ---
+
+	// Generate an initial gameboard
+	this.generateGameboard();
+
+	// Make startGame trigger
+    document.getElementById("play").addEventListener('click', this.startGame, true);
+
+};
+
+/* ==================================================================== */
+
+
 // ----- Class: Worm -----
 
-// Construtor
+
+// Construtor - generates worm and it's behaviour
 // Params: array of positions, length, color
 // Return: nothing
 
-function Worm(gameObj, startPosX, startPosY, length, color, speed) {
+function Worm(scope, startPosX, startPosY, length, color, speed) {
 
 	that = this; // doesn't work with var that
-	that.gameObj = gameObj;
 	that.position = [];
 	that.length = length;
 	that.color = color;
@@ -31,6 +123,7 @@ function Worm(gameObj, startPosX, startPosY, length, color, speed) {
 	this.draw();
 }
 
+
 // Method: init - generates initial worm and sets it moving
 // Params: nothing
 // Return: nothing
@@ -44,6 +137,7 @@ Worm.prototype.init = function() {
 	that.interval = setInterval(function () {that.move()}, that.speed);
 };
 
+
 // Method: draw - draws worm to the gameboard
 // Params: nothing
 // Return: nothing
@@ -51,9 +145,10 @@ Worm.prototype.init = function() {
 Worm.prototype.draw = function() {
 
 	that.position.forEach(function(pos) {
-		that.gameObj.drawToBoard(pos, that.color);
+		scope.drawToBoard(pos, that.color);
 	});
 };
+
 
 // Method: move - moving worm to a direction
 // Params: nothing
@@ -104,93 +199,19 @@ Worm.prototype.move = function() {
 	}
 
 
-	// grow the worm
-	document.getElementById(nextX+'_'+nextY).style.backgroundColor = that.color;
+	// worm takes one step more
+	scope.drawToBoard(nextX+'_'+nextY, that.color);
 	that.position.push(nextX+'_'+nextY);
 
 
 	// tail should follow
-	document.getElementById(that.position[0]).style.backgroundColor = 'white';
+	scope.drawToBoard(that.position[0], global.gameboardColor);
 	that.position = that.position.slice(1,that.position.length);
 
 };
 
-
 /* ==================================================================== */
 
-
-// ----- Class: GameBoard -----
-
-// Constructor - draws game board
-// Params: width, height (of game board)
-
-var GameBoard = function(width, height) {
-
-	global.width = width;
-	global.height = height;
-
-		gameboard = '<div id="gameboard">';
-
-		for(var y=0;y<height;y++) {
-			gameboard+='<div class="row">';
-			for(var x=0;x<width;x++) {
-				var id=x+'_'+y;
-				var id_hipsuilla="'"+id+"'";
-				var grid = '<div id="' + id + '"title="' + id + '" class="cell" onclick="moveHere('+id_hipsuilla+');"></div>';
-				gameboard+=grid;
-			}
-			gameboard += '</div>';
-		}
-
-		gameboard+='</div>';
-
-
-	document.getElementById('gameboard').innerHTML = gameboard;
-
-};
-
-
-/* ==================================================================== */
-
-
-// ----- Class: Game -----
-//
-
-// Constructor - launches the game session
-// Params: nothing
-// Returns: nothing
-
-function Game() {
-
-	// place worms to the game
-	var worm1 = new Worm(this, global.width/2, global.height/2, 5, 'blue', 400);
-
-}
-
-
-// Method: drawToBoard - draws a single tile of board
-// Params: posX, posY, color
-// Returns: nothing
-
-Game.prototype.drawToBoard = function(pos, color) {
-	document.getElementById(pos).style.backgroundColor = color;
-};
-
-/*
-Game.prototype.drawToBoard = function(posX, posY, color) {
-
-	var pos = posX+'_'+posY;
-	document.getElementById(pos).style.backgroundColor = color;
-};
-*/
-
-// -------------------------------------------
-
-function moveHere(target) {
-	global.target = target;
-}
-
-// -------------------------------------------
 
 // TODO
 
