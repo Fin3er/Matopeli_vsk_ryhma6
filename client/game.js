@@ -226,6 +226,7 @@ Worm.prototype.move = function() {
 		food=new Food(Game.scope,'red');
 		//draw new food
 		food.draw();
+		document.getElementById('score').innerHTML= "Score: "+score;
 	}
 
 

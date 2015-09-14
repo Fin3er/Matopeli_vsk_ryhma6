@@ -21,3 +21,9 @@
 #gameboard .cell:hover {
 	background-color: red !important;
 }
+
+#score{ 
+	text-align: center; 
+	color :blue; 
+	font-size: 14;
+}
