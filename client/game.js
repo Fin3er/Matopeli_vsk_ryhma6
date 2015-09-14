@@ -20,6 +20,9 @@ function Game(width, height) {
 	global.width = width;
 	global.height = height;
 	global.gameboardColor = 'white';
+	global.hasFood = false;
+	global.score=0;
+	global.food=null;
 
 
 	// --- Method inside constructor ---
@@ -41,6 +44,12 @@ function Game(width, height) {
 	// NOTE: must be inside constructor and before startGame trigger in order to work
 	this.startGame = function() { 
 		var worm1 = new Worm(scope, global.width/2, global.height/2, 5, 'blue', 400);
+		//Check if there is existing food on the gameboard
+		if(food==null){
+		//Creates new food
+		food = new Food(scope, 'red');
+		food.draw();
+		}
 	}	
 
 
@@ -133,10 +142,8 @@ Worm.prototype.init = function() {
 	for(var i=0;i<that.length;i++) {
 		that.position.push(that.startPosX+'_'+(that.startPosY+i));
 	}
-
 	that.interval = setInterval(function () {that.move()}, that.speed);
 };
-
 
 // Method: draw - draws worm to the gameboard
 // Params: nothing
@@ -203,25 +210,75 @@ Worm.prototype.move = function() {
 	scope.drawToBoard(nextX+'_'+nextY, that.color);
 	that.position.push(nextX+'_'+nextY);
 
-
 	// tail should follow
 	scope.drawToBoard(that.position[0], global.gameboardColor);
 	that.position = that.position.slice(1,that.position.length);
+
+	//when worm hits apple
+	if(food.foodPositionX == posX && food.foodPositionY == posY){
+		//add one scorepoint
+		score++;
+		//just for testing
+		console.log("Osuma"+score);
+		//global food is set to null
+		food=null;
+		//setting the value of global food to a new instance of Food
+		food=new Food(Game.scope,'red');
+		//draw new food
+		food.draw();
+	}
+
+
+	//checking if the worm is going against the wall
+	//some problems as it doesn't registrate the last row in it's position, but the one before it
+	if(that.vectY<0 && posY==1)
+	{
+		console.log("kuolee");
+	}
+	if(that.vectY>0 && posY==18)
+	{
+		console.log("kuolee");
+	}
+	if(that.vectX<0 && posX==1)
+	{
+		console.log("kuolee");
+	}
+	if(that.vectX>0 && posX==18)
+	{
+		console.log("kuolee");
+	}
 
 };
 
 /* ==================================================================== */
 
 
-// TODO
+// ----- Class: Food -----
 
-function newFood() {
-	var color='red';
+// Construtor - generates food and it's color
+// Params: scope and color
+// Return: nothing
+
+function Food(scope, color) {
+	this.scope=scope;
+	this.color=color;
+	this.foodPositionX=0;
+	this.foodPositionY=0;
+	this.foodPosition=0;
+
+
+// Method: draw - generates a random position for food and draws it to gameboard
+// Params: nothing
+// Return: nothing
+
+Food.prototype.draw=function(){}
 	var badLocation=true;
 	while(badLocation){
-		var foodPosition = Math.floor(Math.random()*399);
-		for(var i=0;i<snakePosition.length;i++){
-			if (snakePosition[i] == foodPosition){
+		this.foodPositionX = Math.floor(Math.random()*global.width);
+		this.foodPositionY = Math.floor(Math.random()*global.height);
+		this.foodPosition = this.foodPositionX+'_'+this.foodPositionY;
+		for(var i=0;i<that.position.length;i++){
+			if (that.position[i] == this.foodPosition){
 				console.log("Apples position inside snake");
 				badLocation=true;
 				break;
@@ -231,5 +288,9 @@ function newFood() {
 			}
 		}
 	}
-	document.getElementById(foodPosition).style.backgroundColor = color;
+	document.getElementById(this.foodPosition).style.backgroundColor = this.color;
 }
+
+
+
+
