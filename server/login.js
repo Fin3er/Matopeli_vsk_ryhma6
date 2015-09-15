@@ -12,14 +12,15 @@ app.get('/api/user/login', function(req, res) {
 	    for (var i in rows) {
 	    	if (pass == rows[i].password) {
 	        	console.log("password is ok!")
+	        	res.send("1");
 	    }
 	    else {
 	    console.log("password is not ok!")
+	        	res.send("0");
 
 	    }
 	}
-	res.end();
-
+res.end();
 });
 	});
 }
