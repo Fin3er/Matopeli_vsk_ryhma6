@@ -12,14 +12,43 @@
 	display: table-row;
 }
 
-#gameboard .cell {
+/* all divs inside class .row are cells! */
+#gameboard .row div {
 	display: table-cell;
 	width: 15px;
 	height: 15px;
 }
 
 #gameboard .cell:hover {
-	background-color: red !important;
+	background-color: Red !important;
+}
+
+#gameboard .empty_cell {
+	background-color: White;
+}
+
+#gameboard .food_cell {
+	background-color: Magenta;
+}
+
+#gameboard .superfood_cell {
+	background-color: Black;
+}
+
+#gameboard .worm_1_cell {
+	background-color: Blue;
+}
+
+#gameboard .worm_2_cell {
+	background-color: ForestGreen;
+}
+
+#gameboard .worm_3_cell {
+	background-color: MediumVioletRed;
+}
+
+#gameboard .worm_4_cell {
+	background-color: Gold;
 }
 
 #score{ 
