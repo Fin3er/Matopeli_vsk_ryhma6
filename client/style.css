@@ -19,7 +19,7 @@
 	height: 15px;
 }
 
-#gameboard .cell:hover {
+#gameboard .row div:hover {
 	background-color: Red !important;
 }
 
