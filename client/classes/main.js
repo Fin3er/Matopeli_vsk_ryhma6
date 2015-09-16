@@ -1,31 +1,32 @@
-// global scope can be accessed from anywhere
-var global = this;
+// * Public references *
+var global = this; // global scope can be accessed from anywhere
 
 
 /* ==================================================================== */
 
 // ----- Class: Main -----
-// Contains: prepares and controls things before and after the game
+
+// Objectives: prepares and controls things before and after the game
 
 /* ==================================================================== */
 
-// Constructor - inits the game app
+
+// * Constructor Main() [inits the game app] *
 // Params: nothing
-// Returns: nothing
+// Returns: void
 
 function Main() {
 
-	// set some initial vars
+
+	// * Public static properties *
 	// NOTE: must be global in order to work with game board selection widget
 	global.width = 20;
 	global.height = 20;
 
 
-	// --- Methods inside constructor ---
-
-	// Method: moveHere - sets target for a worm
-	// Params: target (id of div)
-	// Return: nothing
+	// * Public static method: moveHere(params) [sets target for a worm, fired by mouse click] *
+	// Params: string target (id of gameboard cell div)
+	// Return: void
 
 	//NOTE: must be global in order to work with gameboard generation script
 	global.moveHere = function(target) {
@@ -33,21 +34,21 @@ function Main() {
 	}
 
 
-	// Method: startGame - starts the game
+	// * Public static method: startGame() [starts the game] *
 	// Params: nothing
-	// Return: nothing
+	// Return: void
 
-	// NOTE: must be inside constructor and before startGame trigger in order to work
+	//NOTE: must be global in order to work with game start button
 	global.startGame = function() {
 
-		// start a new game object; read gameboard size from global variables
+		// Start a new game object; read current gameboard size from global variables
 		new Game(global.width, global.height);
 	}	
 
 
 	// --- Other constructor tasks ---
 
-	// let's have some dummy gameboard on the screen, before the game has begun and gameboard size is selected
+	// Let's have some new dummy gameboard on the screen, before the game has begun and gameboard size is selected
 	new GameBoard(global.width, global.height);
 
 	// Make startGame trigger

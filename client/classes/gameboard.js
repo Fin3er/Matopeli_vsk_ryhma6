@@ -2,20 +2,22 @@
 /* ==================================================================== */
 
 // ----- Class: GameBoard -----
-// Contains: creating and modifying the gameboard and game interface
+
+// Objectives: creating and modifying the gameboard as an object and game interface
 
 /* ==================================================================== */
 
-// Constructor - generates the game board
-// Params: width, height game board
-// Returns: nothing
+
+// * Constructor GameBoard(params) [generates the game board] *
+// Params: int width, int height [in cells of game board]
+// Returns: void
 
 
 function GameBoard(width, height) {
 
-	this.hasFood = false;
 
-	this.cellClasses = {
+	// * Private properties *
+	var cellTypes = {  // name: value
 		'empty': 'empty_cell',
 		'basicfood': 'food_cell',
 		'superfood': 'superfood_cell',
@@ -25,39 +27,56 @@ function GameBoard(width, height) {
 		'worm_4': 'worm_4_cell'
 	}
 
-	var gameboard = '<div id="gameboard">';
-
-	for(var y=0;y<height;y++) {
-		gameboard+='<div class="row">';
-		for(var x=0;x<width;x++) {
-			var id=x+'_'+y;
-			var id_hipsuilla="'"+id+"'"; // using event listener for mouse clicks would require a totally different gameboard generation script
-			var grid = '<div id="' + id + '"title="' + id + '" class="empty_cell" onclick="moveHere('+id_hipsuilla+');"></div>';
-			gameboard+=grid;
-		}
-		gameboard += '</div>';
+	// * Privileged public method getCellTypes() *
+	// params: none
+	// return: object cellClasses
+	this.getCellTypes = function() {
+		return cellTypes;
 	}
 
-	gameboard+='</div>';
+	// * Public properties *
+	this.hasFood = false;
 
-	document.getElementById('gameboard').innerHTML = gameboard;
+	// * Private method generateGameboard() *
+	// params: none
+	// return: string [gameboard html code]
+	var generateGameboard = function() {
+		var gameboard = '<div id="gameboard">';
+
+		for(var y=0;y<height;y++) {
+			gameboard+='<div class="row">';
+			for(var x=0;x<width;x++) {
+				var id=x+'_'+y;
+				var id_hipsuilla="'"+id+"'"; // using event listener for mouse clicks would require a totally different gameboard generation script
+				var grid = '<div id="' + id + '"title="' + id + '" class="empty_cell" onclick="moveHere('+id_hipsuilla+');"></div>';
+				gameboard+=grid;
+			}
+			gameboard += '</div>';
+		}
+
+		return gameboard+='</div>';
+	}
+
+
+	// --- Other constructor tasks ---
+
+	document.getElementById('gameboard').innerHTML = generateGameboard(); // creates gameboard to browser screen
 }
 
 
-// Method: drawToBoard - draws "anything" to the cell of the game
-// Params: pos (position; id of div)
-// Returns: nothing
+// * Public method drawToBoard(params) [draws "anything" to the cell of the game] *
+// Params: string pos (position; id of div), string cellType [one of cells determined in gameboard class]
+// Returns: void
 
 GameBoard.prototype.drawToBoard = function(pos, cellType) { 
 	
-	// must use scope here, as this is a public method of this class
-	document.getElementById(pos).className = scope.gameBoard.cellClasses[cellType];
+	document.getElementById(pos).className = this.getCellTypes()[cellType];
 }
 
 
-// Method: addFood - generates a random position for food and draws it to the gameboard
-// Params: foodType
-// Return: nothing
+// * Public method addFood(params) [generates a random position for food and draws it to the gameboard]
+// Params: string foodType [one of cells determined in gameboard class]
+// Return: void
 
 GameBoard.prototype.addFood = function(foodType){
 
@@ -69,9 +88,9 @@ GameBoard.prototype.addFood = function(foodType){
 		var foodPosY = Math.floor(Math.random()*global.height);
 		var foodPosition = foodPosX+'_'+foodPosY;
 
-		for(var i=0; i<scope.worm.position.length; i++){
+		for(var i=0; i<scope.worm.getPosition().length; i++){
 
-			if (scope.worm.position[i] == foodPosition){
+			if (scope.worm.getPosition()[i] == foodPosition){
 				console.log("Apples position inside snake");
 				badLocation=true;
 				break;
@@ -88,9 +107,9 @@ GameBoard.prototype.addFood = function(foodType){
 }
 
 
-// Method: setScore - sets score of the game
+// * Public method setScore(params) [sets score of the game to the browser screen]
 // Params: int score
-// Returns: nothing
+// Returns: void
 
 GameBoard.prototype.setScore = function(score) { 
 	
@@ -98,15 +117,19 @@ GameBoard.prototype.setScore = function(score) {
 }
 
 
-// Method: getPositionInfo - provides info what exist in that position in the game board
-// Params: position (x_y)
-// Return: info what is in that position on gameboard
+// * Public method getPositionInfo(params) [provides info what exist in that position in the game board]
+// Params: int posX, int posY
+// Return: object [info what is in that position on gameboard]
 
-GameBoard.prototype.getPositionInfo = function(position){
+GameBoard.prototype.getPositionInfo = function(posX,posY) {
 
+	position = posX+'_'+posY;
 	var posInfo = '';
+	
 
 //TODO
+
+/*	
 
 	//checking if the worm is going against the wall
 	//some problems as it doesn't registrate the last row in it's position, but the one before it
@@ -130,10 +153,12 @@ GameBoard.prototype.getPositionInfo = function(position){
 		//console.log("kuolee");  // do not determine gameover here, but in game class
 		posInfo = 'outside';
 	}
+*/
 
+	return {
+		'position': position, 'value': posInfo
+	};
 
-	return posInfo;
-
-// return: worm / empty / outside / food ?
+// return values: worm / empty / outside / food ?
 
 }
