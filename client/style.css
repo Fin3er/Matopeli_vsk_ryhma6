@@ -30,6 +30,20 @@
 #gameboard .food_cell {
 	background-color: Magenta;
 }
+#onlineplayers {
+	float: left;
+	width: 20%;
+}
+
+
+#game {
+	float: left;
+	width: 60%;
+}
+#rankings {
+	float: left;
+	width: 20%;
+}
 
 #gameboard .superfood_cell {
 	background-color: Black;
@@ -59,3 +73,8 @@
 #gamecontrols{ 
 	text-align: center; 
 }
+#rankings{ 
+	text-align: left; 
+}
+
+
