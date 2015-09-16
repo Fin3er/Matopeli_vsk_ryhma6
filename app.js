@@ -1,10 +1,13 @@
 // hommataan tavittavat palikat
-var express = require('express');
+var express = require('express'),
+    app = module.exports.app = express();
 var app = express();
-var http = require('http').Server(app);
+var http = require('http');
 var mysql = require('mysql');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
 
 /* ===== ExpressJS configs ===== */
@@ -17,7 +20,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('client'));
 
 //serveri pystyyn
-app.listen(8080, function() {
+server.listen(8080, function() {
   console.log('Server running at http://127.0.0.1:8080/');
 });
 
@@ -48,4 +51,10 @@ fs.readdirSync(__dirname + '/server').forEach(function(filename) {
     	// Note: all modules will need http server and database server objects
         require(__dirname + '/server/' + filename)(app, connection);
     }
+});
+
+io.sockets.on('connection', function(socket) {
+    socket.on('messageToServer', function(data) {
+        io.sockets.emit("messageToClient",{ message: data["message"] });
+    });
 });
