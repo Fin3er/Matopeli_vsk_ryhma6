@@ -1,6 +1,6 @@
 #gameboard div {
 	padding: 0px;
-	border: 1px solid green;
+	border: 1px solid black;
 }
 
 #gameboard {
@@ -55,4 +55,7 @@
 	text-align: center; 
 	color :blue; 
 	font-size: 14;
+}
+#gamecontrols{ 
+	text-align: center; 
 }

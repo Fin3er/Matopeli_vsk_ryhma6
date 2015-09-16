@@ -1,5 +1,14 @@
+
+// Ensin alustetaan pelaajan käyttäjänimi, default on random numero
 var loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);;
 
+// Alustetaan chat käyttäjänimellä
+function giveName() {
+document.getElementById("id").innerHTML = "Your username is " + loggedInAs;
+loginToOnline(loggedInAs);
+}
+
+// Kirjautuminen. Aluksi katsotaan tietokannasta onko ok. Jos on niin vaihdetaan nimi.f
 function login() {
 var username = document.getElementById("username").value;
 var password = document.getElementById("password").value;
@@ -13,8 +22,10 @@ document.getElementById("response").innerHTML = "Username or password was wrong"
 }
 
 if (response == 1){
-document.getElementById("response").innerHTML = "Logged in as <strong>" + username + "</strong>";
+document.getElementById("id").innerHTML = "Logged in as <strong>" + username + "</strong>";
+document.getElementById("response").innerHTML = "";
 loggedInAs = username;
+changeChatName(username);
 }
 
 
