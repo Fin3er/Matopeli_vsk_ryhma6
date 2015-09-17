@@ -2,7 +2,7 @@
 
 module.exports = {
 	host     : 'localhost',
-	user     : 'root',
-	password : 'test1234',
+	user     : 'YOURNAMEHERE',
+	password : 'YOURPASSWORDHERE',
 	database : 'wormgame'
 };
