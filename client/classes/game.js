@@ -11,6 +11,7 @@
 // Params: int width, int height (of game board)
 // Returns: void
 
+
 function Game(width, height) {
 
 
@@ -18,8 +19,8 @@ function Game(width, height) {
 	scope = this; // this is the scope (like "namespace") of the game; should be accessed only by scripts inside the game
 
 	// * Private properties *
-	var score = 0; // NOTE: later move this to player class
-
+	// NOTE: later move this to player class
+	var score = 0;
 	// * Privileged public method getScore() *
 	// params: none
 	// return: int score
@@ -38,7 +39,7 @@ function Game(width, height) {
 	
 	this.gameBoard = new GameBoard(width, height); // Let's have a new gameboard for this game session	
 	this.worm = new Worm('worm_1', width/2, height/2, 5, 400); // This time just one new worm to the game Params: scope, wormId, startPosX, startPosY, length, speed
-
+	this.gameBoard.setScore(score); // This is set so score will display zero after 2nd push of "play" - button.
 
 	// --- Other constructor tasks ---
 
@@ -62,29 +63,28 @@ Game.prototype.evalWormMove = function(posX, posY, wormId) {
 
 // TODO: do something with results - create game logic here: game over? some collision? more score?
 
-
-/*
 	//when worm hits apple
-	if(food.foodPositionX == posX && food.foodPositionY == posY){
+	if(this.gameBoard.foodPosX == posX && this.gameBoard.foodPosY  == posY){
 		//add one scorepoint
-		score++;
+		this.addScore();
 		//just for testing
-		console.log("Osuma"+score);
-		//global food is set to null
-		food=null;
-		//setting the value of global food to a new instance of Food
-		food=new Food(Game.scope,'red');
+		console.log("Piste: "+ this.getScore());
+	
 		//draw new food
-		food.draw();
-		document.getElementById('score').innerHTML= "Score: "+score;
+		this.gameBoard.addFood('basicfood');
+		//Get new score
+		this.gameBoard.setScore(this.getScore());
+		//return state of worm
+		return {'wormDestiny': 'eat'};
 	}
-*/
-
-	scope.gameBoard.setScore(this.getScore());
-
-	//return result - options: go-on, eat, gameover, etc?
-	return {
-		'wormDestiny': 'go-on'
-	};
-
+		else
+			{
+				return {'wormDestiny': 'go-on'};
+			}
+	
 }
+
+
+
+
+

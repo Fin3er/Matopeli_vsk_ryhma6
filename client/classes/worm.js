@@ -11,6 +11,8 @@
 // Params: string wormId [=cellType according to gameboard class], int startPosX, int startPosY, int length [just initial length], int speed [just initial speed]
 // Return: nothing
 
+//TODO !!!!Fix !!! Worm's speed doubles after "play" button is pressed second time for reset of game (in index.html)!!!
+
 function Worm(wormId, startPosX, startPosY, length, speed) {
 
 	//that is local scope of the class Worm
@@ -41,7 +43,7 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 		return speed;
 	};
 
-
+	console.log(this.getSpeed);
 	// * Privileged public method getPosition() *
 	// params: none
 	// return: int speed
@@ -121,7 +123,7 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 
 
 		if (result.wormDestiny == 'eat') {
-			this.eat();
+			//this.eat(); No need to do because setScore sets score at game.js
 		}
 
 
@@ -144,13 +146,13 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 	};
 
 
-	// * Private method eat() *
+	// * Private method eat() * 
 	// params: ?
 	// return: ?
 	var eat = function() {
 
-	// TODO
-	// more score? not here, rather in game logic, maybe
+	// TODO   
+	// more score? not here, rather in game logic, maybe <-- already done in Game.js :34 + GameBoard.js :119 
 	// more lenght? skip tail removal?
 	// more speed? interval = ...
 
@@ -167,8 +169,7 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 		}
 
 		interval = setInterval(function () {
-			scope.worm.move();
-		}, speed);
+			scope.worm.move();}, speed);
 	};
 
 

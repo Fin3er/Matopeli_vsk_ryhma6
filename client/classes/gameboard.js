@@ -16,6 +16,8 @@
 function GameBoard(width, height) {
 
 
+	this.foodPosY; //declared here so we can access from Game.js :59 evalWormMove(){}
+	this.foodPosX;
 	// * Private properties *
 	var cellTypes = {  // name: value
 		'empty': 'empty_cell',
@@ -84,9 +86,9 @@ GameBoard.prototype.addFood = function(foodType){
 
 	while (badLocation) {
 
-		var foodPosX = Math.floor(Math.random()*global.width);
-		var foodPosY = Math.floor(Math.random()*global.height);
-		var foodPosition = foodPosX+'_'+foodPosY;
+		this.foodPosX = Math.floor(Math.random()*global.width);  
+		this.foodPosY = Math.floor(Math.random()*global.height);
+		var foodPosition = this.foodPosX+'_'+this.foodPosY;
 
 		for(var i=0; i<scope.worm.getPosition().length; i++){
 
@@ -112,6 +114,7 @@ GameBoard.prototype.addFood = function(foodType){
 // Returns: void
 
 GameBoard.prototype.setScore = function(score) { 
+
 	
 	document.getElementById('score').innerHTML= "Score: "+score;
 }
