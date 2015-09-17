@@ -1,6 +1,6 @@
 // hommataan tavittavat palikat
 var express = require('express'),
-    app = module.exports.app = express();
+app = module.exports.app = express();
 var app = express();
 var http = require('http');
 var mysql = require('mysql');
@@ -8,7 +8,6 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-var userlist = [];
 
 /* ===== ExpressJS configs ===== */
 
@@ -53,6 +52,8 @@ fs.readdirSync(__dirname + '/server').forEach(function(filename) {
     }
 });
 
+var userlist = []; // Array käyttäjille
+
 // Reaaliaikaisten toiminnallisuuksien (chat, onlinepelaajat) selkäranka
 io.sockets.on('connection', function(socket) {
 
@@ -62,31 +63,31 @@ io.sockets.on('connection', function(socket) {
 
 // kirjautuminen nimellä
 
-        socket.on('loginToOnline', function(data) { 
-        var isonlist=false;
-        userlist.push(data['message'] ); 
-        socket.name = data['message'];
-        console.log(data['message'] + " added to chat clients");
-        io.sockets.emit("clientlist", userlist);
-    });
+socket.on('loginToOnline', function(data) { 
+    var isonlist=false;
+    userlist.push(data['message'] ); 
+    socket.name = data['message'];
+    console.log(data['message'] + " added to chat clients");
+    io.sockets.emit("clientlist", userlist);
+});
 // Loginin johdosta tapahtuva nimen vaihto
-        socket.on('changeName', function(data) { 
-        var change = data['message'];
-        userlist.splice(userlist.indexOf(socket.name), 1);
-        userlist.push(data['message'] ); 
-        socket.name = data['message']; 
-        io.sockets.emit("clientlist", userlist);
- 
-    });
+socket.on('changeName', function(data) { 
+    var change = data['message'];
+    userlist.splice(userlist.indexOf(socket.name), 1);
+    userlist.push(data['message'] ); 
+    socket.name = data['message']; 
+    io.sockets.emit("clientlist", userlist);
+    
+});
 
 //poistetaan käyttäjä käyttäjälistasta kun yhteys katkeaa
 socket.on('disconnect', function(){ 
-console.log('user' +  socket.name + " disconnected");
-userlist.splice(userlist.indexOf(socket.name), 1);
-console.log("Users still left in chat: ")
-for (var i = 0; i < userlist.length; ++i) {
-    console.log(userlist[i]);
-}
-io.sockets.emit("clientlist", userlist);
+    console.log('user' +  socket.name + " disconnected");
+    userlist.splice(userlist.indexOf(socket.name), 1);
+    console.log("Users still left in chat: ")
+    for (var i = 0; i < userlist.length; ++i) {
+        console.log(userlist[i]);
+    }
+    io.sockets.emit("clientlist", userlist);
 });
 });
