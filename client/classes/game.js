@@ -73,9 +73,19 @@ Game.prototype.evalWormMove = function(posX, posY, wormId) {
 		//draw new food
 		this.gameBoard.addFood('basicfood');
 		//Get new score
-		this.gameBoard.setScore(this.getScore());
+		this.gameBoard.setScore(this.getScore()); 
 		//return state of worm
 		return {'wormDestiny': 'eat'};
+	}
+	//Checking if the worm is going against the walls
+	else if (posX > (this.gameBoard.width-1) || posX < 0 || posY > (this.gameBoard.height-1) || posY < 0)
+	{
+		console.log("Seinä");
+		//Assigning the worm to null, but there are still things to do. We haven't completed the gameover yet.
+		this.worm=null;
+		window.alert("Game Over");
+		setHighScore(global.loggedInAs,this.getScore());
+		return {'wormDestiny': 'die'};
 	}
 		else
 			{

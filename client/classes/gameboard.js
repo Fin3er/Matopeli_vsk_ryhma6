@@ -18,6 +18,8 @@ function GameBoard(width, height) {
 
 	this.foodPosY; //declared here so we can access from Game.js :59 evalWormMove(){}
 	this.foodPosX;
+	this.width=width; 
+	this.height=height;  
 	// * Private properties *
 	var cellTypes = {  // name: value
 		'empty': 'empty_cell',

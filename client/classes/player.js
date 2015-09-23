@@ -1,6 +1,8 @@
-
+//global variable for player's name
 // Ensin alustetaan pelaajan käyttäjänimi, default on random numero
-var loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);;
+global.loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);;
+global.isLogged = false;
+
 
 // Alustetaan chat käyttäjänimellä
 function giveName() {
@@ -34,6 +36,8 @@ function login() {
 			document.getElementById("response").innerHTML = "";
 			loggedInAs = username;
 			changeChatName(username);
+			//We change the global isLogged variables value to true
+			isLogged=true;
 		}
 	});
 }

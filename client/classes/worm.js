@@ -143,6 +143,11 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 			this.draw();
 		}
 
+		if (result.wormDestiny == 'die')
+		{
+			
+		}
+
 	};
 
 

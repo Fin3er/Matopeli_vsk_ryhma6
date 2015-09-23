@@ -90,4 +90,27 @@ socket.on('disconnect', function(){
     }
     io.sockets.emit("clientlist", userlist);
 });
+
+
+//Receives the rankinglist from database and emits it to ranking.js
+socket.on('getHighScoreList',function(){
+    connection.query("SELECT user,score FROM highscores ORDER BY score DESC;",function(err,rows,fields) {
+        console.log(rows);
+        socket.emit("RankingList",JSON.stringify(rows));
+    });
+});
+
+//Inserts new highscore row to database. After that's done it emits "highScoreAdded" back to ranking.js
+socket.on("setHighScoreList",function(name,score){
+    //console.log("uusi highscore" + name + score);
+    var insert = {user:name,score:score};
+    connection.query("INSERT INTO highscores SET ?",insert,function(err,rows){
+        if(err){
+            console.log("There was an error: " + err);
+        }
+        else
+        console.log("Highscore lisätty");
+        socket.emit("highScoreAdded");
+    });
+});
 });

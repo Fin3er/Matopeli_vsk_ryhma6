@@ -12,8 +12,9 @@
  <script src="classes/worm.js"></script>
  <script src="classes/player.js"></script>
  <script src="classes/chat.js"></script>
+ <script src="classes/ranking.js"></script>
 </head>
-<body onload="Main(); giveName();">
+<body onload="Main(); giveName(); getHighScoreList();">
   <div id="login">
     <fieldset>
       <legend><strong>Login</strong></legend>
@@ -32,7 +33,7 @@
   </fieldset>
 </div>
 <div id ="rankings"><fieldset>
-  <legend><strong>Player rankings</strong></legend></fieldset>
+  <legend><strong>Player rankings</strong></legend><div id = "ranking"></div></fieldset>
 </div>
 <br style="clear: left;"/>
 <br style="clear: left;"/>
