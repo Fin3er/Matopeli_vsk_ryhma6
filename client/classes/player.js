@@ -1,16 +1,15 @@
-//global variable for player's name
-// Ensin alustetaan pelaajan käyttäjänimi, default on random numero
+//global variable for player's name that is first based on random number
 global.loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);;
 global.isLogged = false;
 
 
-// Alustetaan chat käyttäjänimellä
+//Starting the chat
 function giveName() {
 	document.getElementById("id").innerHTML = "Your username is " + loggedInAs;
 	loginToOnline(loggedInAs);
 }
 
-//rekisteröintimetodi
+//Method for registering
 function register() {
 	var username = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
@@ -21,7 +20,7 @@ function register() {
 }
 
 
-// Kirjautuminen. Aluksi katsotaan tietokannasta onko ok. Jos on niin vaihdetaan nimi.f
+// Loggin in. Server responds with number 0 if username or password was not ok and with number 1 if they were ok
 function login() {
 	var username = document.getElementById("username").value;
 	var password = document.getElementById("password").value;

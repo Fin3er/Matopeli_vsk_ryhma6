@@ -1,9 +1,9 @@
 module.exports = function(app, connection) {
-	//kun severille tulee tietoa, napataan nämä muuttujiin. Sitten tsekataan onko tietokannassa jo vastaavaa käyttäjänimeä käytössä. Jos on niin pyydetään valitsemaan toinen käyttäjänimi. Jos ei niin rekisteröinti ok.
+	// When server gets data, this is put in to variables. Then the server checks if the username is available and responds accordingly 
 	app.get('/api/user/register', function(req, res) {
 		var uname = req.query['username'];
 		var password = req.query['password'];
-		// tässä määritellään serverin palautukset, kun yritetty rekisteröityä
+		// These are the possible responds that the server sends back to client
 		var registermessage = "Thank you, you have registered!";
 		var registermessage2 = "Please select another username!";
 		var registermessage3 = "Username / password can't be empty!";

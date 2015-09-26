@@ -1,7 +1,7 @@
 var socketio = io.connect("http://localhost:8080/");
 var clientlist = [];
 
-//viestin lähettämisen koodi
+//Sending a message
 function sendMessage(){ 
 	var data = document.getElementById("message_input").value;
 	document.getElementById("message_input").value = '';
@@ -9,13 +9,13 @@ function sendMessage(){
 	socketio.emit("messageToServer", { message : "<strong>" + loggedInAs + "</strong>" + ": " + data});
 };
 
-//viestin vastaanottamisen koodi
+//Receiving a message
 socketio.on("messageToClient", function(data) {
 	var time = new Date();
 	document.getElementById("chatmessages").innerHTML = ("<hr/>" + addZero(time.getHours()) + ":" + addZero(time.getMinutes()) + " " + data['message'] + document.getElementById("chatmessages").innerHTML);
 });
 
-//koodi online-pelaakine päivittämiseen
+//This updates the online players -list on page
 socketio.on("clientlist", function(data) {
 	clientlist = data;
 	document.getElementById("onlinelist").innerHTML = ("");
@@ -26,7 +26,7 @@ socketio.on("clientlist", function(data) {
 	}
 });
 
- //toisten moduulien käyttämät koodit (nimen vaihto ja kirjautuminen nimellä onlinepelaajiin / chattiin)
+ //Functions that other modules use
  function loginToOnline(data) {
  	socketio.emit("loginToOnline", { message : data});
  };
