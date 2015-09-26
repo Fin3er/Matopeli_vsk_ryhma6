@@ -1,4 +1,7 @@
 module.exports = function(app, connection) {
+// Kirjautuessa tänne välittyvät käyttäjän syöttämä salasana sekä käyttäjätunnus.
+// Serveri tarkastaa löytyykö tietokannasta vastaavia rivejä ja palauttaa vastauksen.
+// Mikäli salasana ja käyttäjätunnus on ok, palvelin lähettää kokonaisluvun 1. Muussa tapauksessa 0.
 	app.get('/api/user/login', function(req, res) {
 		var uname = req.query['username'];
 		var pass = req.query['password'];
