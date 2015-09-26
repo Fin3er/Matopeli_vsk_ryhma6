@@ -1,4 +1,4 @@
-// hommataan tavittavat palikat
+// Required pieces
 var express = require('express'),
 app = module.exports.app = express();
 var app = express();
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({
 // set public html directory
 app.use(express.static('client'));
 
-//serveri pystyyn
+//Starting server
 server.listen(8080, function() {
   console.log('Server running at http://127.0.0.1:8080/');
 });
@@ -34,7 +34,7 @@ res.sendFile(__dirname + '/register.html');
 
 /* ===== MySQL configs ===== */
 
-//MySQL yhteyden määritys ja muodostus
+//MySQL connection
 var connection = mysql.createConnection(require('./dbconfig.js'));
 
 connection.connect(function(err) {
@@ -52,17 +52,16 @@ fs.readdirSync(__dirname + '/server').forEach(function(filename) {
     }
 });
 
-var userlist = []; // Array käyttäjille
+var userlist = []; // Array for users
 
-// Reaaliaikaisten toiminnallisuuksien (chat, onlinepelaajat) selkäranka
+// Backbone for chat and online players
 io.sockets.on('connection', function(socket) {
 
-    socket.on('messageToServer', function(data) { // kun tulee chatviesti, välitetään se kaikille
+    socket.on('messageToServer', function(data) { // when a message received, its sent to every client
         io.sockets.emit("messageToClient",{ message: data["message"] });
     });
 
-// kirjautuminen nimellä
-
+// Loggin in with a name
 socket.on('loginToOnline', function(data) { 
     var isonlist=false;
     userlist.push(data['message'] ); 
@@ -70,7 +69,7 @@ socket.on('loginToOnline', function(data) {
     console.log(data['message'] + " added to chat clients");
     io.sockets.emit("clientlist", userlist);
 });
-// Loginin johdosta tapahtuva nimen vaihto
+// Changing name because of login
 socket.on('changeName', function(data) { 
     var change = data['message'];
     userlist.splice(userlist.indexOf(socket.name), 1);
@@ -80,7 +79,7 @@ socket.on('changeName', function(data) {
     
 });
 
-//poistetaan käyttäjä käyttäjälistasta kun yhteys katkeaa
+//Removing client from array when disconnected
 socket.on('disconnect', function(){ 
     console.log('user' +  socket.name + " disconnected");
     userlist.splice(userlist.indexOf(socket.name), 1);
