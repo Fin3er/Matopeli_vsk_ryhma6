@@ -330,10 +330,10 @@ var WebSocketAPIHandler = (function (scope) {
 		scope.gs.getGameState(function(state) {
 			if (state == "error") {
 				scope.gs.ws.sendErrorMessage(socket, 'Unknown game state. Server is out of order.');
-				scope.gs.ws.sendMessage(socket, 'setGameState', 'empty');
+				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': 'empty'});
 			}
 			else {
-				scope.gs.ws.sendMessage(socket, 'setGameState', state);
+				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': state});
 			}
 		});
 	}

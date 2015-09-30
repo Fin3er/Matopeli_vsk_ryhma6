@@ -58,7 +58,7 @@ var GameServer = (function () {
             return priv.playersOnline;
         };
 
-        // privileged public method getPlayer(player) - return object of one player
+        // privileged public method getPlayer(username) - return object of one player
         // params: none
         // return: object player
         this.gs.getPlayer = function(username) {
@@ -138,7 +138,7 @@ var GameServer = (function () {
             else {
                 state = "empty"; // no games online
             }
-            
+          
             callback(state);
         };
         

@@ -22,7 +22,7 @@ function Game(gameID, establisherSocket) {
 	priv.gameID = gameID;
 	priv.establisherSocket = {};
 	priv.joinedPlayers = {};
-	priv.state = "empty";
+	priv.state = "established";
 
 	// * Privileged public method getState() *
 	// params: none
