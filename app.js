@@ -72,20 +72,6 @@ var GameServer = (function () {
             else return result[0];
         };
 
-        // privileged public method getPlayer(player) - return object of one player
-        // params: none
-        // return: object player
-        this.gs.getPlayer = function(username) {
-            
-            var result = priv.playersOnline.filter(function(player) {
-              return player.getUsername() == username;
-            });
-
-            // player name should be unique, but let's test it anyway
-            if (result.length > 1) return null;
-            else return result[0];
-        };
-
         // privileged public method establishNewGame(game) - establish a new game into system
         // params: object game
         // return: void
@@ -131,6 +117,29 @@ var GameServer = (function () {
         // return: object gamesOnline
         this.gs.getGames = function(game) {
             return priv.gamesOnline;
+        };
+
+        // privileged public method getGameState(callback) - return info to new browser, what happens now in the game
+        // params: object callback
+        // return: void
+        this.gs.getGameState = function(callback) {
+
+            // in this dev version there is only 1 concurrent game
+            // this is why we write:
+
+            var state;
+
+            if (priv.gamesOnline.length > 1) {
+                state = "error"; // too many games online
+            }
+            if (priv.gamesOnline.length == 1) {
+                state = priv.gamesOnline[0].getState();  // 1 game online
+            }
+            else {
+                state = "empty"; // no games online
+            }
+            
+            callback(state);
         };
         
 

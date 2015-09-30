@@ -44,6 +44,7 @@ function Player(username) {
 			console.log("player "+priv.username+" logged in to the system and websocket became successfully attached");
 		}
 		else {
+
 			//TODO delete this player object from the system
 			callback("NOK", "Socket.name didn't match registered player name.");
 			scope.gs.dropPlayer(this);

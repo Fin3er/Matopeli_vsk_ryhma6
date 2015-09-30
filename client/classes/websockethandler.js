@@ -18,6 +18,10 @@ socket.on("message", function(msg) {
 			gameEstablished(msg.data.gameID);
 			break;
 
+		case 'setGameState':
+			setGameState(msg.data.state);
+			break;
+
 		case 'errorMessage':
 			console.log("Received an error websocket message from the server: " + JSON.stringify(msg.data));
 			break;

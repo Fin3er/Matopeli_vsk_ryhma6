@@ -173,7 +173,8 @@ function Main() {
     document.getElementById("joinGame").addEventListener('click', function() { global.joinNewGame(); });
     document.getElementById("leaveGame").addEventListener('click', function() { global.leaveNewGame(); });
 
-    // set game state empty by default
-    setGameState("empty");
+    // get game state from server, when logging in
+    socket.emit("message", { 'request': 'getGameState', 'data' : ""});
+    //setGameState("empty");
 
 }

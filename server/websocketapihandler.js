@@ -24,8 +24,6 @@ var WebSocketAPIHandler = (function (scope) {
 		
 		/* === Backbone for chat and online players === */
 
-		this.chatUserList = []; // array of connected client names (both anonymous and logged-ins)
-
 		this.io.sockets.on('connection', function(socket) {
 
 			// Connect a single client
@@ -84,6 +82,10 @@ var WebSocketAPIHandler = (function (scope) {
 						scope.gs.ws.leaveGame(socket, msg.data);
 						break;
 
+					case 'getGameState':
+						scope.gs.ws.getGameState(socket);
+						break;
+
 					case 'errorMessage':
 						scope.gs.ws.getErrorMessage(msg.data);
 						break;
@@ -99,6 +101,18 @@ var WebSocketAPIHandler = (function (scope) {
 
 	};
 
+
+	// Method: getConnectedUsers() - get list of chat users directly from the socket.io
+	// param: none
+	// return: array
+	wsH.prototype.getConnectedUsers = function (data) {
+
+		var clientlist = scope.gs.ws.io.sockets.sockets.map(function(e) {
+			return e.name;
+		});
+
+		return clientlist.filter(function(e){return e}); // remove empty sockets, in case they exists
+	};
 
 
 	/*	=================================
@@ -204,12 +218,11 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	wsH.prototype.connectNewClient = function (socket, data) {
 
-		scope.gs.ws.chatUserList.push(data.username); 
-	    socket.name = data.username;
+		socket.name = data.username;
 	    console.log(data.username + " added to chat clients");
 
 	    // update user list to all connected clients
-	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.chatUserList);
+	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
 	}
 
 	// Method: disconnect (socket, data) - removing client when disconnected
@@ -219,44 +232,36 @@ var WebSocketAPIHandler = (function (scope) {
 
 		// TODO: logout user from the game, too! ;) -> can't do this restAPIHandler?
 
-		console.log('user ' +  socket.name + " disconnected");
-	    scope.gs.ws.chatUserList.splice(scope.gs.ws.chatUserList.indexOf(socket.name), 1);
-	    
-	    console.log("Users still left in chat: ");
-	    for (var i = 0; i < scope.gs.ws.chatUserList.length; ++i) {
-	        console.log(scope.gs.ws.chatUserList[i]);
-	    }
-
 	    // update user list to all connected clients
-	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.chatUserList);
+	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
 	}
 
 	// Method: changeClientName (socket, data) - connects a registered user
 	//
 	//
 	wsH.prototype.changeClientName = function (socket, data) {
-		
+
 		// Replace old user name
-	    scope.gs.ws.chatUserList.splice(scope.gs.ws.chatUserList.indexOf(socket.name), 1);
-	    scope.gs.ws.chatUserList.push(data.username);
 	    socket.name = data.username;
 
+	    // update user list to all connected clients
+	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
+
 	    // attach web socket to logged in player
-	    var player = scope.gs.getPlayer(data.username);
+	    var player = scope.gs.getPlayer(socket.name);
 
 	    if (player != null) {
 	    	player.attachWebSocket(socket, function(result, message) {
 		    	if (result == "NOK") {
 		    		scope.gs.ws.sendErrorMessage(socket, message); // attaching socket failed
+		    		return;
 		    	};
 	    	});
 	    }
 	    else {
 	    	scope.gs.ws.sendErrorMessage(socket, "Unable to attach web socket. Player doesn't found with that name."); // attaching socket failed
-	    }	    
-
-	    // update user list to all connected clients
-	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.chatUserList);
+	    	return;
+	    }
 	}
 
 
@@ -317,9 +322,21 @@ var WebSocketAPIHandler = (function (scope) {
 		
 	}
 
+	// Method: getGameState (socket) - client asks the game state, so let's tell it
+	//
+	//
+	wsH.prototype.getGameState = function (socket) {
 
-//lue http://socket.io/docs/#
-//sub moduulit http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html
+		scope.gs.getGameState(function(state) {
+			if (state == "error") {
+				scope.gs.ws.sendErrorMessage(socket, 'Unknown game state. Server is out of order.');
+				scope.gs.ws.sendMessage(socket, 'setGameState', 'empty');
+			}
+			else {
+				scope.gs.ws.sendMessage(socket, 'setGameState', state);
+			}
+		});
+	}
 
 	// Initialize the module
     var wsh = new wsH();

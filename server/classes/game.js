@@ -16,9 +16,20 @@
 
 function Game(gameID, establisherSocket) {
 
-	var gameID = gameID;
-	var establisherSocket = {};
-	var joinedPlayers = {};
+	// storage for private variables
+    var priv = { };
+
+	priv.gameID = gameID;
+	priv.establisherSocket = {};
+	priv.joinedPlayers = {};
+	priv.state = "empty";
+
+	// * Privileged public method getState() *
+	// params: none
+	// return: string state of the game
+	this.getState = function() {
+		return priv.state;
+	}
 
 };
 
