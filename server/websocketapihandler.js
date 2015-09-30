@@ -44,6 +44,8 @@ var WebSocketAPIHandler = (function (scope) {
 			// messages must be in format { request: validrequestname, data: object-or-string}
 			socket.on('message', function(msg) {
 
+				console.log("websockethandler received: " + JSON.stringify(msg));
+
 				switch (msg.request) {
 
 					case 'publicChatMessage':
@@ -60,6 +62,26 @@ var WebSocketAPIHandler = (function (scope) {
 
 					case 'setHighScoreList':
 						scope.gs.ws.setHighScoreList(socket, msg.data);
+						break;
+
+					case 'establishNewGame':
+						scope.gs.ws.establishNewGame(socket);
+						break;
+
+					case 'startGame':
+						scope.gs.ws.startGame(socket, msg.data);
+						break;
+
+					case 'endGame':
+						scope.gs.ws.leaveGame(socket, msg.data);
+						break;
+
+					case 'joinGame':
+						scope.gs.ws.startGame(socket, msg.data);
+						break;
+
+					case 'leaveGame':
+						scope.gs.ws.leaveGame(socket, msg.data);
 						break;
 
 					case 'errorMessage':
@@ -235,6 +257,46 @@ var WebSocketAPIHandler = (function (scope) {
 
 	    // update user list to all connected clients
 	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.chatUserList);
+	}
+
+
+	/*	=================================
+		Game-related WebSocket API Handlers
+		================================= */
+
+	// Method: establishNewGame (socket) - client establishes a new game to system; game is becomes open for players to join
+	//
+	//
+	wsH.prototype.establishNewGame = function (socket) {
+
+	}
+
+	// Method: startGame (socket, data) - client starts a new game; possible when there's at least 1 player
+	//
+	//
+	wsH.prototype.startGame = function (socket, data) {
+		
+	}
+
+	// Method: endGame (socket, data) - client ends the game; ends established or started game
+	//
+	//
+	wsH.prototype.endGame = function (socket, data) {
+		
+	}
+
+	// Method: joinGame (socket, data) - client joins the game; not possible when game has begun
+	//
+	//
+	wsH.prototype.joinGame = function (socket, data) {
+		
+	}
+
+	// Method: leaveGame (socket, data) - client leaves the game; not possible when game has begun
+	//
+	//
+	wsH.prototype.leaveGame = function (socket, data) {
+		
 	}
 
 
