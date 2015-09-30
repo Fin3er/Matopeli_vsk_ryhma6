@@ -109,13 +109,3 @@ body {
 	background-color: black;
 }
 
-
-/* buttons */
-
-#establishGame {
-	display: inline-block;
-}
-
-#startGame, #endGame, #joinGame, #leaveGame {
-	display: none;
-}

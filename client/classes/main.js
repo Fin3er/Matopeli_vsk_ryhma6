@@ -57,6 +57,18 @@ function Main() {
 	}
 
 
+	// * Public static method: gameEstablished(gameID) [reaction to a new game announcement on client side] *
+	// Params: nothing
+	// Return: void
+
+	//NOTE: must be global in order to work with the button
+	global.gameEstablished = function(gameID) {
+
+		// change game controls according to this state
+		setGameState("established");
+	}
+
+
 	// * Public static method: startGame(game) [this player starts the game] *
 	// Params: nothing
 	// Return: void
@@ -103,7 +115,49 @@ function Main() {
 		// Start a new game object; read current gameboard size from global variables
 		socket.emit("message", { 'request': 'leaveGame', 'data': game});
 	}
+
+
+	// * Public static method: setGameState(state) [set states of the game in client] *
+	// Params: string state
+	// Return: void
 	
+	global.setGameState = function(state) {
+
+		switch (state) {
+
+			case "established":
+
+				// Control buttons visibility
+			    document.getElementById("establishGame").style.display = "none";
+			    document.getElementById("removeGame").style.display = "inline-block";
+			    document.getElementById("startGame").style.display = "inline-block";
+			    document.getElementById("endGame").style.display = "none";
+
+			    var playerjoined = true; // TODO: change this
+			    if (playerjoined) {
+			    	document.getElementById("joinGame").style.display = "none";
+			    	document.getElementById("leaveGame").style.display = "inline-block";	
+			    }
+			    else {
+			    	document.getElementById("joinGame").style.display = "inline-block";
+			    	document.getElementById("leaveGame").style.display = "none";	
+			    }
+			    break;
+
+			case "empty":
+			default:
+
+				// Control buttons visibility
+			    document.getElementById("establishGame").style.display = "inline-block";
+			    document.getElementById("removeGame").style.display = "none";
+			    document.getElementById("startGame").style.display = "none";
+			    document.getElementById("endGame").style.display = "none";
+			    document.getElementById("joinGame").style.display = "none";
+			    document.getElementById("leaveGame").style.display = "none";
+			    break;
+		}
+		
+	}
 
 
 	// --- Other constructor tasks ---
@@ -113,9 +167,13 @@ function Main() {
 
 	// Make triggers
     document.getElementById("establishGame").addEventListener('click', function() { global.establishNewGame(); });
+    document.getElementById("removeGame").addEventListener('click', function() { global.removeGame(); });
     document.getElementById("startGame").addEventListener('click', function() { global.startNewGame(); });
     document.getElementById("endGame").addEventListener('click', function() { global.endNewGame(); });
     document.getElementById("joinGame").addEventListener('click', function() { global.joinNewGame(); });
     document.getElementById("leaveGame").addEventListener('click', function() { global.leaveNewGame(); });
+
+    // set game state empty by default
+    setGameState("empty");
 
 }

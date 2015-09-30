@@ -13,6 +13,11 @@ function receiveMessage(data){
 	document.getElementById("chatmessages").innerHTML = ("<hr/>" + addZero(time.getHours()) + ":" + addZero(time.getMinutes()) + " " + data + document.getElementById("chatmessages").innerHTML);	
 };
 
+//Sending a system message
+function sendSystemMessage(data){ 
+	socket.emit("message", { 'request': 'publicChatMessage', 'data' : '<strong>Game Client of ' + loggedInAs + ':</strong> ' + data});
+};
+
 //This updates the online players -list on page
 function receiveClientList(data){
 	clientlist = data;

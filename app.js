@@ -72,11 +72,51 @@ var GameServer = (function () {
             else return result[0];
         };
 
-        // privileged public method establishGame(game) - establish a new game into system
+        // privileged public method getPlayer(player) - return object of one player
+        // params: none
+        // return: object player
+        this.gs.getPlayer = function(username) {
+            
+            var result = priv.playersOnline.filter(function(player) {
+              return player.getUsername() == username;
+            });
+
+            // player name should be unique, but let's test it anyway
+            if (result.length > 1) return null;
+            else return result[0];
+        };
+
+        // privileged public method establishNewGame(game) - establish a new game into system
         // params: object game
         // return: void
-        this.gs.establishGame = function() {
+        this.gs.establishNewGame = function(socket, callback) {
+
+            // check who is trying to establish a game?
+
+            var player = this.getPlayer(socket.name);
+
+            if (player == null) {
+                callback("NOK", {'error': "You must be logged in to establish a game."});
+                return;
+            }
+
+            if (Object.keys(player.getSocket()).length == 0) {
+                //socket isn't attached.. what's going on here?
+                callback("NOK", {'error': "Socket not attached to player when trying to establishing a new game."});
+                return;
+            }
+
+            // generate a random id for this game
+            var gameID = Math.random().toString(36).substr(2, 5);
+            console.log("New game established with id: " + gameID);   
+
+            // establish a new game
+            var game = new priv.game(gameID, socket);
+            
+            // save object to online players array
             priv.gamesOnline.push(game);
+
+            callback("OK", {'gameID': gameID});
         };
 
         // privileged public method dropGame(game) - takes game off the system
@@ -135,6 +175,7 @@ var GameServer = (function () {
 
         // load the classes (objects must be created with 'new' of these)
         priv.player = require('./server/classes/player.js');
+        priv.game = require('./server/classes/game.js');
 
     }
 

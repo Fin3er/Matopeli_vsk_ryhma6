@@ -25,6 +25,10 @@ function Player(username) {
 		return priv.username;
 	}
 
+	this.getSocket = function () {
+		return priv.socket;
+	}
+
 	// privileged public method attachWebSocket (socket, callback)
 	this.attachWebSocket = function (socket, callback) {
 

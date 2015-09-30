@@ -9,30 +9,31 @@
 // Note: this module isn't initialized while requiring it, but _new_ must be used, when creating players
 
 
-// * Constructor Game(params) [loads and launches the game] *
-// Params: int width, int height (of game board)
+// * Constructor Game(params, establisherSocket) [makes a new game into the system] *
+// Params: string gameID, object establisherSocket
 // Returns: void
 
 
-function Game() {
+function Game(gameID, establisherSocket) {
 
-	var gameID = "";
-	var playersInGame = {};
-
-};
-
-
-Player.prototype.establishGame = function () {
-
+	var gameID = gameID;
+	var establisherSocket = {};
+	var joinedPlayers = {};
 
 };
 
 
-Player.prototype.applyToJoinGame = function () {
+Game.prototype.establishGame = function () {
+
+
+};
+
+
+Game.prototype.applyToJoinGame = function () {
 
 
 };
 
 
 // Make it available outside this file
-module.exports = Player;
+module.exports = Game;

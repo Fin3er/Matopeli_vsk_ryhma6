@@ -269,6 +269,24 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	wsH.prototype.establishNewGame = function (socket) {
 
+		scope.gs.establishNewGame(socket, function(result, data) {
+
+			switch (result) {
+
+				case "OK":
+					// announce this to all clients
+	    			scope.gs.ws.broadcastMessage('newGameEstablished', {'establisher': socket.name, 'gameID': data.gameID});
+	    			scope.gs.ws.publicChatMessage('<strong>Game Server:</strong> A new game established by user ' + socket.name + ". Would you like to join?");
+					break;
+
+				case "NOK":
+				default:
+					// it failed, tell to establisher only
+					scope.gs.ws.sendErrorMessage(socket, data.error);
+					break;
+			}
+
+		});
 	}
 
 	// Method: startGame (socket, data) - client starts a new game; possible when there's at least 1 player
