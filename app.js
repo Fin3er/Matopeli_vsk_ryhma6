@@ -26,8 +26,16 @@ var GameServer = (function () {
 
 
         // general game-related variables
+        priv.maxPlayers = 4; // how many players is allowed in the game
         priv.playersOnline = [];
         priv.gamesOnline = [];
+
+        // privileged public method getMaxPlayers() - return number how many players can be in the game
+        // params: none
+        // return: int maxPlayers
+        this.gs.getMaxPlayers = function() {
+            return priv.maxPlayers;
+        };
 
         // privileged public method addPlayers(player) - create player to the system
         // params: object player
@@ -72,13 +80,44 @@ var GameServer = (function () {
             else return result[0];
         };
 
+        // privileged public method addPlayerToGame(username, game, callback) - add player to a game
+        // params: object player, object game
+        // return: object player
+        this.gs.addPlayerToGame = function(username, gameID, callback) {
+
+            var player = getPlayer(username);
+
+            if (player == null) {
+                callback("NOK", {'error': "Can't add player to the game, because player with that name "+username+" doesn't found."});
+                return;
+            }
+
+            var game = getGame(gameID);
+
+            if (game == null) {
+                callback("NOK", {'error': "Can't add player to the game, because game with that ID "+gameID+"doesn't found."});
+                return;
+            }
+
+            
+        };
+
+
         // privileged public method establishNewGame(game) - establish a new game into system
         // params: object game
         // return: void
         this.gs.establishNewGame = function(socket, callback) {
 
-            // check who is trying to establish a game?
+            // is game already established? in this dev version, there can be only 1 concurrent game
+            if (priv.gamesOnline.length > 0) {
+                // send error
+                callback("NOK", {'error': "Game is already established. The dev version allows only one concurrent game. Sorry."});
+                // force client to have the existing game
+                scope.gs.ws.getGameState(socket);
+                return;
+            }
 
+            // check who is trying to establish a game
             var player = this.getPlayer(socket.name);
 
             if (player == null) {
@@ -96,14 +135,15 @@ var GameServer = (function () {
             var gameID = Math.random().toString(36).substr(2, 5);
             console.log("New game established with id: " + gameID);   
 
-            // establish a new game
-            var game = new priv.game(gameID, socket);
+            // establish a new game and make establisher to join the game
+            var game = new priv.game(gameID, player);
             
-            // save object to online players array
+            // save object to online games array
             priv.gamesOnline.push(game);
 
             callback("OK", {'gameID': gameID});
         };
+
 
         // privileged public method dropGame(game) - takes game off the system
         // params: object game
@@ -112,11 +152,18 @@ var GameServer = (function () {
             priv.gamesOnline.splice(priv.gamesOnline.indexOf(game), 1);
         };
 
-        // privileged public method getGames() - return info of all games in the system
+        // privileged public method getGame(gameID) - return object of one game
         // params: none
-        // return: object gamesOnline
-        this.gs.getGames = function(game) {
-            return priv.gamesOnline;
+        // return: object game
+        this.gs.getGame = function(gameID) {
+            
+            var result = priv.gamesOnline.filter(function(game) {
+              return game.getID() == gameID;
+            });
+
+            // in this dev version, there should be only 1 concurrent game; let's test this rule
+            if (result.length == 1) return result[0];
+            else return null; // no game or more than 1 game
         };
 
         // privileged public method getGameState(callback) - return info to new browser, what happens now in the game
@@ -127,19 +174,18 @@ var GameServer = (function () {
             // in this dev version there is only 1 concurrent game
             // this is why we write:
 
-            var state;
+            var state = "empty"; // we expect no games online
+            var gameID = ""; // we expect no games online
 
             if (priv.gamesOnline.length > 1) {
                 state = "error"; // too many games online
             }
             if (priv.gamesOnline.length == 1) {
                 state = priv.gamesOnline[0].getState();  // 1 game online
-            }
-            else {
-                state = "empty"; // no games online
+                gameID = priv.gamesOnline[0].getID();
             }
           
-            callback(state);
+            callback(state, gameID);
         };
         
 

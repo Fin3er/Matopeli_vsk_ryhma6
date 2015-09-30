@@ -22,7 +22,7 @@ function Main() {
 	// NOTE: must be global in order to work with game board selection widget
 	global.width = 20;
 	global.height = 20;
-
+	global.establishedGameID = "";
 
 	// * Public static method: moveHere(params) [sets target for a worm, fired by mouse click] *
 	// Params: string target (id of gameboard cell div)
@@ -33,21 +33,8 @@ function Main() {
 		global.target = target;
 	}
 
-/*
 
-	// * Public static method: startGame() [starts the game] *
-	// Params: nothing
-	// Return: void
-
-	//NOTE: must be global in order to work with game start button
-	global.startGame = function() {
-
-		// Start a new game object; read current gameboard size from global variables
-		new Game(global.width, global.height);
-	}	
-*/
-
-	// * Public static method: establishNewGame() [establish a game] *
+	// * Public static method: establishNewGame() [client establishes a game] *
 	// Params: nothing
 	// Return: void
 
@@ -57,60 +44,65 @@ function Main() {
 	}
 
 
-	// * Public static method: gameEstablished(gameID) [reaction to a new game announcement on client side] *
+	// * Public static method: gameEstablished() [server has established a new game for client] *
 	// Params: nothing
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.gameEstablished = function(gameID) {
+	global.gameEstablished = function(state, data) {
+		
+		if (global.loggedInAs == data.establisher) {
+			// by default, client that established the game, is also joined to the game
+			global.myGameID = data.gameID;
+		}
 
-		// change game controls according to this state
-		setGameState("established");
+		// set state of the game
+		setGameState(state, data.gameID);
 	}
 
 
-	// * Public static method: startGame(game) [this player starts the game] *
+	// * Public static method: startGame(gameID) [this player starts the game] *
 	// Params: nothing
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.startGame = function(game) {
+	global.startGame = function(gameID) {
 
 		// Start a new game object; read current gameboard size from global variables
 		socket.emit("message", { 'request': 'startGame', 'data': game});
 	}
 
 
-	// * Public static method: endGame(game) [this player ends the game] *
+	// * Public static method: endGame(gameID) [this player ends the game] *
 	// Params: nothing
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.endGame = function(game) {
+	global.endGame = function(gameID) {
 
 		// Start a new game object; read current gameboard size from global variables
 		socket.emit("message", { 'request': 'endGame', 'data': game});
 	}
 
 
-	// * Public static method: joinGame(game) [this player joins the game] *
+	// * Public static method: joinGame(gameID) [this player joins the game] *
 	// Params: nothing
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.joinGame = function(game) {
+	global.joinGame = function() {
 
 		// Start a new game object; read current gameboard size from global variables
-		socket.emit("message", { 'request': 'joinGame', 'data': game});
+		socket.emit("message", { 'request': 'joinGame', 'data': {'gameID': global.establishedGameID}});
 	}
 
 
-	// * Public static method: joinGame(game) [this player leaves the game] *
+	// * Public static method: joinGame(gameID) [this player leaves the game] *
 	// Params: nothing
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.leaveGame = function(game) {
+	global.leaveGame = function(gameID) {
 
 		// Start a new game object; read current gameboard size from global variables
 		socket.emit("message", { 'request': 'leaveGame', 'data': game});
@@ -118,10 +110,13 @@ function Main() {
 
 
 	// * Public static method: setGameState(state) [set states of the game in client] *
-	// Params: string state
+	// Params: string state, string gameID, object playerInfo
 	// Return: void
 	
-	global.setGameState = function(state) {
+	global.setGameState = function(state, gameID, playerInfo) {
+
+		// set id of this game
+		global.establishedGameID = gameID;
 
 		switch (state) {
 
@@ -133,12 +128,13 @@ function Main() {
 			    document.getElementById("startGame").style.display = "inline-block";
 			    document.getElementById("endGame").style.display = "none";
 
-			    var playerjoined = true; // TODO: change this
-			    if (playerjoined) {
+			    if (global.myGameID == global.establishedGameID) {
+			    	// player has joined the game
 			    	document.getElementById("joinGame").style.display = "none";
 			    	document.getElementById("leaveGame").style.display = "inline-block";	
 			    }
 			    else {
+			    	// player hasn't joined the game
 			    	document.getElementById("joinGame").style.display = "inline-block";
 			    	document.getElementById("leaveGame").style.display = "none";	
 			    }
@@ -168,13 +164,12 @@ function Main() {
 	// Make triggers
     document.getElementById("establishGame").addEventListener('click', function() { global.establishNewGame(); });
     document.getElementById("removeGame").addEventListener('click', function() { global.removeGame(); });
-    document.getElementById("startGame").addEventListener('click', function() { global.startNewGame(); });
-    document.getElementById("endGame").addEventListener('click', function() { global.endNewGame(); });
-    document.getElementById("joinGame").addEventListener('click', function() { global.joinNewGame(); });
-    document.getElementById("leaveGame").addEventListener('click', function() { global.leaveNewGame(); });
+    document.getElementById("startGame").addEventListener('click', function() { global.startGame(); });
+    document.getElementById("endGame").addEventListener('click', function() { global.endGame(); });
+    document.getElementById("joinGame").addEventListener('click', function() { global.joinGame(); });
+    document.getElementById("leaveGame").addEventListener('click', function() { global.leaveGame(); });
 
     // get game state from server, when logging in
     socket.emit("message", { 'request': 'getGameState', 'data' : ""});
-    //setGameState("empty");
 
 }

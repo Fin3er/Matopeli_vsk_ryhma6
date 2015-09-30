@@ -15,11 +15,15 @@ socket.on("message", function(msg) {
 			break;
 
 		case 'newGameEstablished':
-			gameEstablished(msg.data.gameID);
+			gameEstablished('established', msg.data);
 			break;
 
 		case 'setGameState':
-			setGameState(msg.data.state);
+			setGameState(msg.data.state, msg.data.gameID);
+			break;
+
+		case 'setPlayerInfo':
+			setPlayerInfo(msg.data);
 			break;
 
 		case 'errorMessage':

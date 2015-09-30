@@ -55,34 +55,73 @@ button{
 	width: 20%;
 }
 
-#gameboard .superfood_cell {
+.superfood_cell {
 	background-color: Black;
 }
 
-#gameboard .worm_1_cell {
+.worm_1_cell {
 	background-color: Blue;
 }
 
-#gameboard .worm_2_cell {
+.worm_2_cell {
 	background-color: ForestGreen;
 }
 
-#gameboard .worm_3_cell {
+.worm_3_cell {
 	background-color: MediumVioletRed;
 }
 
-#gameboard .worm_4_cell {
+.worm_4_cell {
 	background-color: Gold;
 }
 
-#score{ 
-	text-align: center; 
-	color :blue; 
-	font-size: 14;
+#players {
+	width: 230px;
+	float: right;
 }
-#gamecontrols{ 
-	text-align: center; 
+
+.playerinfo {
+	width: 100px;
+	border: 2px solid black;
+	padding: 5px;
+	margin: 5px auto;
 }
+
+.playercolor {
+	height: 15px;
+	width: 100%;
+
+}
+
+.playername {
+	text-align: center;
+	font-style: italic;
+}
+
+.playerscore {
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.playerstatus {
+	text-align: center;
+	font-size: 12px;
+}
+
+#gamecontrols {
+	display: none;
+	width: 100px;
+	float: left;
+	text-align: center;
+	border: 2px solid black;
+	margin: 15px;
+}
+
+#gamecontrols button {
+	margin: 5px;
+}
+
 #rankings{ 
 	text-align: left; 
 	height: 430px;

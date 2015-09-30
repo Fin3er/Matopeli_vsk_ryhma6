@@ -75,7 +75,7 @@ var WebSocketAPIHandler = (function (scope) {
 						break;
 
 					case 'joinGame':
-						scope.gs.ws.startGame(socket, msg.data);
+						scope.gs.ws.joinGame(socket, msg.data);
 						break;
 
 					case 'leaveGame':
@@ -119,7 +119,7 @@ var WebSocketAPIHandler = (function (scope) {
 		WebSocket API server-side messagers
 		================================= */
 
-	// Method: broadcast (event, data) - transmit a message to all connected clients
+	// Method: broadcastMessage (event, data) - transmit a message to all connected clients
 	// 
 	// 
 	wsH.prototype.broadcastMessage = function (request, data) {
@@ -145,6 +145,13 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	wsH.prototype.getErrorMessage = function (data) {
 		console.log("WebSocketAPIHandler received an error message from client " + socket + ": " + data);
+	};
+
+	// Method: broadcastErrorMessage (event, data) - transmit a message to all connected clients
+	// 
+	// 
+	wsH.prototype.broadcastErrorMessage = function (data) {
+		this.io.sockets.emit('message', { 'request': 'errorMessage', 'data': data});
 	};
 
 
@@ -259,7 +266,7 @@ var WebSocketAPIHandler = (function (scope) {
 	    	});
 	    }
 	    else {
-	    	scope.gs.ws.sendErrorMessage(socket, "Unable to attach web socket. Player doesn't found with that name."); // attaching socket failed
+	    	scope.gs.ws.sendErrorMessage(socket, "Unable to attach web socket. Player already exists or doesn't found with that name."); // attaching socket failed
 	    	return;
 	    }
 	}
@@ -282,6 +289,8 @@ var WebSocketAPIHandler = (function (scope) {
 					// announce this to all clients
 	    			scope.gs.ws.broadcastMessage('newGameEstablished', {'establisher': socket.name, 'gameID': data.gameID});
 	    			scope.gs.ws.publicChatMessage('<strong>Game Server:</strong> A new game established by user ' + socket.name + ". Would you like to join?");
+	    			// update also player interface
+	    			scope.gs.ws.setPlayerInfo(data.gameID);
 					break;
 
 				case "NOK":
@@ -312,7 +321,23 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	//
 	wsH.prototype.joinGame = function (socket, data) {
-		
+
+		var game = scope.gs.getGame(data.gameID);
+		var player = scope.gs.getPlayer(socket.name);
+
+		if (game == null || player == null) {
+			scope.gs.ws.sendErrorMessage(socket, 'Unknown gameID '+data.gameID+' or playerName '+socket.name);
+		}
+		else {
+			game.joinGame(player, function(result, data) {
+				if (result == "OK") {
+					scope.gs.ws.broadcastMessage('setPlayerInfo', {'data': data});
+				}
+				else {
+					scope.gs.ws.sendErrorMessage(socket, data.error);
+				}
+			});
+		}
 	}
 
 	// Method: leaveGame (socket, data) - client leaves the game; not possible when game has begun
@@ -327,15 +352,27 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	wsH.prototype.getGameState = function (socket) {
 
-		scope.gs.getGameState(function(state) {
+		scope.gs.getGameState(function(state, gameID) {
 			if (state == "error") {
 				scope.gs.ws.sendErrorMessage(socket, 'Unknown game state. Server is out of order.');
-				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': 'empty'});
+				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': 'empty', 'gameID': ''});
 			}
 			else {
-				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': state});
+				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': state, 'gameID': gameID});
+				scope.gs.ws.setPlayerInfo(gameID);
 			}
 		});
+	}
+
+	// Method: setPlayerInfo (socket, gameID) - provides player info of the game; this is mainly called from client with "getGameState" or "establishNewGame"
+	//
+	//
+	wsH.prototype.setPlayerInfo = function (gameID) {
+		var game = scope.gs.getGame(gameID);
+		if (game != null) {
+			scope.gs.ws.broadcastMessage('setPlayerInfo', {'data': game.getPlayerInfo()});
+		}
+		// if it was null, we don't care this time
 	}
 
 	// Initialize the module
