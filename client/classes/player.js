@@ -27,10 +27,10 @@ function login() {
 	console.log(username);
 	$.get("/api/user/login?username=" + username + "&password=" + password +"&", function(response){
 		console.log(response);
-		if (response == 0 || response == null) {
-			document.getElementById("response").innerHTML = "Username or password was wrong";
+		if (response.response == "NOK" || response == null) {
+			document.getElementById("response").innerHTML = response.message;
 		}
-		if (response == 1){
+		if (response.response == "OK"){
 			document.getElementById("id").innerHTML = "Logged in as <strong>" + username + "</strong>";
 			document.getElementById("response").innerHTML = "";
 			loggedInAs = username;

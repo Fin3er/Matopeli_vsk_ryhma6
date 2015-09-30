@@ -1,115 +1,149 @@
-// Required pieces
-var express = require('express'),
-app = module.exports.app = express();
-var app = express();
-var http = require('http');
-var mysql = require('mysql');
-var fs = require('fs');
-var bodyParser = require('body-parser');
-var server = http.createServer(app);
-var io = require('socket.io').listen(server);
+/* ==================================================================== */
 
-/* ===== ExpressJS configs ===== */
+// ----- Class: GameServer -----
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+// Objectives: initializes and runs the game
 
-// set public html directory
-app.use(express.static('client'));
+/* ==================================================================== */
 
-//Starting server
-server.listen(8080, function() {
-  console.log('Server running at http://127.0.0.1:8080/');
-});
-
-/*
-// välitetään verkkosivutiedosto
-app.get('/register', function(req, res){
-res.sendFile(__dirname + '/register.html');
-	console.log("register.html sent");
-});
-*/
+var GameServer = (function () {
 
 
-/* ===== MySQL configs ===== */
+    /* Constructor GameServer() [inits the game app] */
+    // Params: nothing
+    // Returns: void
 
-//MySQL connection
-var connection = mysql.createConnection(require('./dbconfig.js'));
+    function constructor() {
 
-connection.connect(function(err) {
-	if (err) throw err;
-	console.log("Connected to MySQL server!");
-});
+        // namespace for the server app
+        scope = this;
+
+        // create gs ("gameserver") container for public methods and variables in order to avoid polluting the root scope
+        this.gs = {};
+
+        // storage for private variables
+        var priv = {};
 
 
-/* ===== Include all project related server side modules ===== */
+        // general game-related variables
+        priv.playersOnline = [];
+        priv.gamesOnline = [];
 
-fs.readdirSync(__dirname + '/server').forEach(function(filename) {
-    if (~filename.indexOf('.js')) {
-    	// Note: all modules will need http server and database server objects
-        require(__dirname + '/server/' + filename)(app, connection);
+        // privileged public method addPlayers(player) - create player to the system
+        // params: object player
+        // return: void
+        this.gs.createPlayer = function(username) {
+
+            // TODO check that player with this name doesn't exists already
+
+            // new logged in player
+            var player = new priv.player(username);
+            
+            // save object to online players array
+            priv.playersOnline.push(player);
+        };
+
+        // privileged public method dropPlayers(player) - takes player off the players list
+        // params: object player
+        // return: void
+        this.gs.dropPlayer = function(player) {
+            // TODO delete player object too, not only the reference to it
+            priv.playersOnline.splice(priv.playersOnline.indexOf(player), 1);
+        };
+
+        // privileged public method getPlayers() - return info of all online players
+        // params: none
+        // return: object playersOnline
+        this.gs.getPlayers = function() {
+            return priv.playersOnline;
+        };
+
+        // privileged public method getPlayer(player) - return object of one player
+        // params: none
+        // return: object player
+        this.gs.getPlayer = function(username) {
+            
+            var result = priv.playersOnline.filter(function(player) {
+              return player.getUsername() == username;
+            });
+
+            // player name should be unique, but let's test it anyway
+            if (result.length > 1) return null;
+            else return result[0];
+        };
+
+        // privileged public method establishGame(game) - establish a new game into system
+        // params: object game
+        // return: void
+        this.gs.establishGame = function() {
+            priv.gamesOnline.push(game);
+        };
+
+        // privileged public method dropGame(game) - takes game off the system
+        // params: object game
+        // return: void
+        this.gs.dropGame = function(game) {
+            priv.gamesOnline.splice(priv.gamesOnline.indexOf(game), 1);
+        };
+
+        // privileged public method getGames() - return info of all games in the system
+        // params: none
+        // return: object gamesOnline
+        this.gs.getGames = function(game) {
+            return priv.gamesOnline;
+        };
+        
+
+        /* === set up expressjs http server === */
+
+        priv.express = require('express');
+        this.app = priv.express();
+        this.server = require('http').createServer(this.app);
+        this.bodyParser = require('body-parser');
+
+        // for parsing application/json
+        this.app.use(this.bodyParser.json());
+
+        // for parsing application/x-www-form-urlencoded
+        this.app.use(this.bodyParser.urlencoded({ extended: true }));
+
+        // set public html directory
+        this.app.use(priv.express.static('client'));
+
+        // http server to listen port 8080
+        this.server.listen(8080);  
+
+
+        /* ===== Include all project related server side modules ===== */
+
+        /*
+
+        this.fs = require('fs');
+
+            fs.readdirSync(__dirname + '/server').forEach(function(filename) {
+                if (~filename.indexOf('.js')) {
+                    // Note: all modules will need http server and database server objects
+                    require(__dirname + '/server/' + filename)(scope);
+                }
+            });
+        */
+
+        // load the modules (auto-initialization)
+        this.gs.db = require('./server/dbhandler.js')(scope);
+        require('./server/restapihandler.js')(scope);
+        this.gs.ws = require('./server/websocketapihandler.js')(scope);
+
+        // load the classes (objects must be created with 'new' of these)
+        priv.player = require('./server/classes/player.js');
+
     }
-});
 
-var userlist = []; // Array for users
 
-// Backbone for chat and online players
-io.sockets.on('connection', function(socket) {
+    // Initialize the module
+    constructor();
 
-    socket.on('messageToServer', function(data) { // when a message received, its sent to every client
-        io.sockets.emit("messageToClient",{ message: data["message"] });
-    });
-
-// Loggin in with a name
-socket.on('loginToOnline', function(data) { 
-    var isonlist=false;
-    userlist.push(data['message'] ); 
-    socket.name = data['message'];
-    console.log(data['message'] + " added to chat clients");
-    io.sockets.emit("clientlist", userlist);
-});
-// Changing name because of login
-socket.on('changeName', function(data) { 
-    var change = data['message'];
-    userlist.splice(userlist.indexOf(socket.name), 1);
-    userlist.push(data['message'] ); 
-    socket.name = data['message']; 
-    io.sockets.emit("clientlist", userlist);
-    
-});
-
-//Removing client from array when disconnected
-socket.on('disconnect', function(){ 
-    console.log('user' +  socket.name + " disconnected");
-    userlist.splice(userlist.indexOf(socket.name), 1);
-    console.log("Users still left in chat: ")
-    for (var i = 0; i < userlist.length; ++i) {
-        console.log(userlist[i]);
-    }
-    io.sockets.emit("clientlist", userlist);
 });
 
 
-//Receives the rankinglist from database and emits it to ranking.js
-socket.on('getHighScoreList',function(){
-    connection.query("SELECT user,score FROM highscores ORDER BY score DESC;",function(err,rows,fields) {
-        console.log(rows);
-        socket.emit("RankingList",JSON.stringify(rows));
-    });
-});
-
-//Inserts new highscore row to database. After that's done it emits "highScoreAdded" back to ranking.js
-socket.on("setHighScoreList",function(name,score){
-    //console.log("uusi highscore" + name + score);
-    var insert = {user:name,score:score};
-    connection.query("INSERT INTO highscores SET ?",insert,function(err,rows){
-        if(err){
-            console.log("There was an error: " + err);
-        }
-        else
-        console.log("Highscore lisätty");
-        socket.emit("highScoreAdded");
-    });
-});
-});
+// Run the game server
+var gameServer = new GameServer();

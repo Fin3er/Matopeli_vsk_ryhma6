@@ -1,7 +1,7 @@
 //Class for managing rankinglist
-//TODO Should we add just one highscore/user?
 
-var socket = io.connect("http://localhost:8080/");
+//TODO Should we add just one highscore/user?
+//TODO make this working with server! (do not add here: var socket = io.connect("http://localhost:8080/"); )
 
 //Gets the highscore-data from server and adds the data to index.html as a list
 function getHighScoreList(){
@@ -38,3 +38,4 @@ socket.on("highScoreAdded",function(){
 
 }); 
 }
+
