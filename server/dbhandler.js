@@ -29,7 +29,7 @@ var DbHandler = (function (scope) {
         }); 
 	};
 
-var crypto = require('crypto'), // encryption cipher
+var crypto = require('crypto'), // encryption cipher details
     algorithm = 'aes-256-ctr',
     passphrase = 'ffg66dfsd4f';
 
@@ -86,6 +86,8 @@ var crypto = require('crypto'), // encryption cipher
 
 
 	DbH.prototype.addNewUser = function (user, res, callback) {
+
+		// TODO: sql injection problems?
 
 		var cipher = crypto.createCipher(algorithm,passphrase);
 		user.password = cipher.update(user.password,'utf8','hex');
