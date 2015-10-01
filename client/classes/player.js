@@ -1,5 +1,6 @@
+
 //global variable for player's name that is first based on random number
-global.loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);;
+global.loggedInAs ="UnknownPlayer" + Math.floor((Math.random() * 10000) + 1);
 global.isLogged = false;
 global.myGameID = "";
 
@@ -15,7 +16,7 @@ function register() {
 	var password = document.getElementById("password").value;
 	$.get("/api/user/register?username=" + username + "&password=" + password +"&", function(response){
 		console.log(response);
-		document.getElementById("result").innerHTML = response;
+		document.getElementById("result").innerHTML = response.response;
 	});
 }
 

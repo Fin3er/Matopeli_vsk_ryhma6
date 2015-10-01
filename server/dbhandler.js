@@ -29,13 +29,18 @@ var DbHandler = (function (scope) {
         }); 
 	};
 
+var crypto = require('crypto'), // encryption cipher
+    algorithm = 'aes-256-ctr',
+    passphrase = 'ffg66dfsd4f';
 
 	DbH.prototype.checkUserPassword = function (uname, pass, res, callback) {
 
 		// TODO: sql injection problems?
 
 		var queryString = "SELECT * FROM users WHERE username='" + uname + "'";
-
+		var cipher = crypto.createCipher(algorithm,passphrase);
+		var crypted = cipher.update(pass,'utf8','hex');
+		console.log(crypted);
 		this.connection.query(queryString, function(err, rows, fields) {
 
 			if (err) {
@@ -43,7 +48,7 @@ var DbHandler = (function (scope) {
 			}
 
 			for (var i in rows) {
-				if (pass == rows[i].password) {
+				if (crypted == rows[i].password) {
 
 					callback({"result" : "OK"}, res);
 					return;
@@ -82,8 +87,8 @@ var DbHandler = (function (scope) {
 
 	DbH.prototype.addNewUser = function (user, res, callback) {
 
-		// TODO: sql injection problems?
-
+		var cipher = crypto.createCipher(algorithm,passphrase);
+		user.password = cipher.update(user.password,'utf8','hex');
 		this.connection.query('INSERT INTO users SET ?', user, function(err) {
 			if (err) {
 				console.log("DbH.prototype.addNewUser error: " + err);
