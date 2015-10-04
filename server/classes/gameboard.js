@@ -38,6 +38,9 @@ function GameBoard(width, height) {
 		return cellTypes;
 	}
 
+	// * Public properties *
+	this.hasFood = false;
+
 	// * Private method generateGameboard() *
 	// params: none
 	// return: string [gameboard html code]
@@ -72,4 +75,69 @@ function GameBoard(width, height) {
 GameBoard.prototype.drawToBoard = function(pos, cellType) { 
 	
 	document.getElementById(pos).className = this.getCellTypes()[cellType];
+}
+
+
+// * Public method addFood(params) [generates a random position for food and draws it to the gameboard]
+// Params: string foodType [one of cells determined in gameboard class]
+// Return: void
+
+GameBoard.prototype.addFood = function(foodType){
+
+	var badLocation=true;
+
+	while (badLocation) {
+
+		this.foodPosX = Math.floor(Math.random()*global.width);  
+		this.foodPosY = Math.floor(Math.random()*global.height);
+		var foodPosition = this.foodPosX+'_'+this.foodPosY;
+
+		for(var i=0; i<scope.worm.getPosition().length; i++){
+
+			if (scope.worm.getPosition()[i] == foodPosition){
+				console.log("Apples position inside snake");
+				badLocation=true;
+				break;
+			}
+
+			else{
+				badLocation=false;
+			}
+
+		}
+	}
+
+	this.drawToBoard(foodPosition, foodType);
+}
+
+
+// * Public method setScore(params) [sets score of the game to the browser screen]
+// Params: int score
+// Returns: void
+
+GameBoard.prototype.setScore = function(score) { 
+
+	
+	document.getElementById('score').innerHTML= "Score: "+score;
+}
+
+
+// * Public method getPositionInfo(params) [provides info what exist in that position in the game board]
+// Params: int posX, int posY
+// Return: object [info what is in that position on gameboard]
+
+GameBoard.prototype.getPositionInfo = function(posX,posY) {
+
+	position = posX+'_'+posY;
+	var posInfo = '';
+	
+
+//TODO: check here, if position is outside the gameboard, or collides other worm or food, etc
+
+	return {
+		'position': position, 'value': posInfo
+	};
+
+// return values: worm / empty / outside / food ?
+
 }

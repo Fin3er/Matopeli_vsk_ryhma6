@@ -144,6 +144,14 @@ var GameServer = (function () {
             callback("OK", {'gameID': gameID});
         };
 
+        // privileged public method startGame(gameID) - start an established game
+        // params: object game
+        // return: void
+        this.gs.startGame = function(gameID) {
+            //TODO
+            console.log('we are here');
+        }
+
 
         // privileged public method dropGame(game) - takes game off the system
         // params: object game
@@ -206,7 +214,7 @@ var GameServer = (function () {
         this.app.use(priv.express.static('client'));
 
         // http server to listen port 8080
-        this.server.listen(8080);  
+        this.server.listen(8080);
 
 
         /* ===== Include all project related server side modules ===== */
