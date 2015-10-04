@@ -15,7 +15,7 @@ function register() {
 	var password = document.getElementById("password").value;
 	$.get("/api/user/register?username=" + username + "&password=" + password +"&", function(response){
 		console.log(response);
-		document.getElementById("result").innerHTML = response;
+		document.getElementById("result").innerHTML = response.message;
 	});
 }
 

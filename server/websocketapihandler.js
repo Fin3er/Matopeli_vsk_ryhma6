@@ -230,6 +230,7 @@ var WebSocketAPIHandler = (function (scope) {
 
 	    // update user list to all connected clients
 	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
+	    scope.gs.ws.publicChatMessage(socket.name + " joined chat!");
 	}
 
 	// Method: disconnect (socket, data) - removing client when disconnected
@@ -240,6 +241,7 @@ var WebSocketAPIHandler = (function (scope) {
 		// TODO: logout user from the game, too! ;) -> can't do this restAPIHandler?
 
 	    // update user list to all connected clients
+	    scope.gs.ws.publicChatMessage(socket.name + " left chat!");
 	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
 	}
 
