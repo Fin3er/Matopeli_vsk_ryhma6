@@ -5,7 +5,7 @@
   "name": "just-a-wormgame-prototype",
   "description" : "A multi-player worm game prototype by a student group from Karelia UAC",
   "version": "0.0.1",
-  "main": "app.js",
+  "main": "server.js",
   "private": true,
   "homepage": "https://github.com/Fin3er/Matopeli_vsk_ryhma6",
   "url" : "https://github.com/Fin3er/Matopeli_vsk_ryhma6/issues",

@@ -21,7 +21,7 @@
 
 2. In command prompt, change directory to the created game project folder
 
-3. Start the game server with command: node app.js
+3. Start the game server with command: node server.js
 
 4. Access the game with browser at: http://localhost:8080
 
@@ -36,7 +36,7 @@
 
 ##### Files and folders
 
-* app.js file -> launches the game server
+* server.js file -> launches the game server
 * package.json file -> project details -> add here for example the dependencies - more info or additional info see https://docs.npmjs.com/files/package.json
 * client folder -> all static client side files, that are public in the internet, served by ExpressJS http server
 * server folder -> all server side files

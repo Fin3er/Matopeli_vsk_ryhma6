@@ -30,6 +30,17 @@ var GameServer = (function () {
         priv.playersOnline = [];
         priv.gamesOnline = [];
 
+
+        // * Public method posToCoords(params) [converts position (aka gameboard id of cell) to x, y coordinates]
+        // Params: string position in format 'x_y'
+        // Return: object {'posX': posX, 'posY': posY}
+        this.gs.posToCoords = function(position) {
+            var pos = position.split('_');
+            var x = parseInt(pos[0]);
+            var y = parseInt(pos[1]);
+            return {'x': x, 'y': y};
+        }
+
         // privileged public method getMaxPlayers() - return number how many players can be in the game
         // params: none
         // return: int maxPlayers
@@ -146,6 +157,7 @@ var GameServer = (function () {
             callback("OK", {'gameID': gameID});
         };
 
+
         // privileged public method startGame(username, gameID, callback) - start an established game
         // params: strin username, string GameID, object callback
         // return: void
@@ -154,7 +166,6 @@ var GameServer = (function () {
             //TODO check here, is username a joined member of the game
 
             var game = scope.gs.getGame(gameID);
-            console.log('game2'+game.getID());
 
             if (game == null) {
                 callback("NOK", {'error': "Can't add player to the game, because game with that ID "+gameID+"doesn't found."});
@@ -201,18 +212,18 @@ var GameServer = (function () {
             // in this dev version there is only 1 concurrent game
             // this is why we write:
 
-            var state = "empty"; // we expect no games online
+            var gameState = "empty"; // we expect no games online
             var gameID = ""; // we expect no games online
 
             if (priv.gamesOnline.length > 1) {
-                state = "error"; // too many games online
+                gameState = "error"; // too many games online
             }
             if (priv.gamesOnline.length == 1) {
-                state = priv.gamesOnline[0].getState();  // 1 game online
+                gameState = priv.gamesOnline[0].getGameState();  // 1 game online
                 gameID = priv.gamesOnline[0].getID();
             }
           
-            callback(state, gameID);
+            callback(gameState, gameID);
         };
         
 

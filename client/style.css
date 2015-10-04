@@ -59,6 +59,10 @@ button{
 	background-color: Black;
 }
 
+.worm_x_cell {
+	background-color: Grey;
+}
+
 .worm_1_cell {
 	background-color: Blue;
 }

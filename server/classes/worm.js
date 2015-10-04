@@ -11,89 +11,75 @@
 // Params: string wormId [=cellType according to gameboard class], int startPosX, int startPosY, int length [just initial length], int speed [just initial speed]
 // Return: nothing
 
-//TODO !!!!Fix !!! Worm's speed doubles after "play" button is pressed second time for reset of game (in index.html)!!!
-
-function Worm(wormId, startPosX, startPosY, length, speed) {
-
-	//that is local scope of the class Worm
-	//that = this;
-
+function Worm(wormId, startPos, startTarget, wormLength) {
 
 	// * Private properties *
-	var position = []; // array of positions string x_y where worm is located
-	var wormId = wormId; // string wormId according to cellType of gameboard class
-	var length = length; // int length in positions
-	var startPosX = startPosX; // int start position x of worm's tail
-	var startPosY = startPosY; // int start position y of worm's tail
-	var speed = speed; // int speed of worm in milliseconds = how quickly it goes one position ahead
-	var interval = {}; // placeholder of interval object for reference
-	var direction = '0_0'; // string x_y of worm's target position // TODO: make this random?
-	var vectX = 1; // x distance & direction to target position // TODO: make this random?
-	var vectY = 1; // y distance & direction to target position // TODO: make this random?
+	
+	// storage for private variables
+	var priv = {};
+
+	priv.wormPositions = []; // array of positions string x_y where worm is located, in order: from tail to head
+	priv.wormId = wormId; // string wormId according to cellType of gameboard class
+	priv.wormLength = wormLength; // int length in positions
+	priv.startPos = startPos; // int start position x_y of worm's tail
+	priv.target = startTarget; // string x_y of worm's target position
+	priv.vectX = 1; // x distance & direction to target position // TODO: make this random?
+	priv.vectY = 1; // y distance & direction to target position // TODO: make this random?
+	priv.givenTarget = startTarget; // string x_y of worm's target position that can be updated any time by client
 
 
-	// * Public static properties *
-	global.target = '0_0'; // TODO: make these random?
+	// * Privileged public method getPositions() *
+	// params: none
+	// return: positions in format {'x_y': cellType, 'x_y': cellType}
+	this.getPositions = function() {
+
+		var wormp = {};
+
+		for (var i=0; i<priv.wormPositions.length; i++) {
+			wormp[priv.wormPositions[i]] = priv.wormId;
+		}
+
+		return wormp;
+	};
 
 
-	// * Privileged public method getSpeed() *
+	// * Privileged public method setTarget(target) *
 	// params: none
 	// return: int speed
-	this.getSpeed = function() {
-		return speed;
-	};
-
-	console.log(this.getSpeed);
-	// * Privileged public method getPosition() *
-	// params: none
-	// return: int speed
-	this.getPosition = function() {
-		return position;
+	this.setTarget = function(target) {
+		priv.givenTarget = target;
 	};
 
 
-	// * Privileged public method draw() [draws worm to the gameboard] *
-	// params: none
-	// return: void
-	this.draw = function() {
-		position.forEach(function(pos) {
-			scope.gameBoard.drawToBoard(pos, wormId);
-		});
-	};
-
-
-	// * Privileged public method move() [moving worm to a direction]
+	// * Privileged public method moveWorm() [moving worm to a direction]
 	// Params: nothing
 	// Return: void
 
-	this.move = function() {
+	this.moveWorm = function() {
 
 		// get x, y coordinates of now
-		var posNow = position[position.length-1];
+		var posNow = scope.gs.posToCoords(priv.position[priv.position.length-1]);
+		var posX = posNow.x;
+		var posY = posNow.y;	
 
-		var pos = posNow.split('_');
-		var posX = parseInt(pos[0]);
-		var posY = parseInt(pos[1]);
 		var nextX = '';
 		var nexty = '';
 
 
-		if (direction != global.target) {
+		if (priv.target != priv.givenTarget) {
 			
 			//new direction is set
-			direction = global.target;
+			priv.target = priv.givenTarget;
 
-			// get x, y coordinates of direction
-			var dir = direction.split('_');
-			var dirX = parseInt(dir[0]);
-			var dirY = parseInt(dir[1]);
+			// get x, y coordinates of new direction
+			var tarNow = scope.gs.posToCoords(priv.target);
+			var tarX = tarNow.x;
+			var tarY = tarNow.y;	
 
 			// where to take direction
 			// the same direction is kept as long as user doesn't change it
-			vectX = dirX-posX;
-			vectY = dirY-posY;
-
-			console.log(vectX+'_'+vectY);
+			vectX = tarX-tarX;
+			vectY = tarY-tarY;
 		}
 
 		// let's go to direction that is more far away
@@ -117,7 +103,9 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 		}
 
 
-		// TODO: here find out, can worm move? yes or no? or did it eat? 
+		
+
+/*		// TODO: here find out, can worm move? yes or no? or did it eat? what then happens?
 
 		result = scope.evalWormMove(nextX, nextY, wormId);
 
@@ -147,10 +135,12 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 		{
 			
 		}
+*/
 
 	};
 
 
+/*
 	// * Private method eat() * 
 	// params: ?
 	// return: ?
@@ -162,24 +152,46 @@ function Worm(wormId, startPosX, startPosY, length, speed) {
 	// more speed? interval = ...
 
 	};
+*/
 
 
-	// * Private method init() [generates initial worm and sets it moving] *
+/*
+	// * Private method die() * 
+	// params: ?
+	// return: ?
+	var die = function() {
+
+	// TODO   
+
+	};
+*/
+
+
+	// * Private method generateWorm() [generates initial worm to gameboard] *
 	// params: none
-	// return: void
-	var init = function() {
+	// return: array generated worm positions list in format ['x_y', 'x_y', 'x_y']
+	priv.generateWorm = function() {
 
-		for(var i=0;i<length;i++) {
-			position.push(startPosX+'_'+(startPosY+i));
+		// get x, y coordinates of worm's tail initially
+		var posNow = scope.gs.posToCoords(priv.startPos);
+		var posX = posNow.x;
+		var posY = posNow.y;
+
+		var wormp = [];
+
+		for(var i=0; i<wormLength; i++) {
+			wormp.push(posX+'_'+(posY+i));
 		}
 
-		interval = setInterval(function () {
-			scope.worm.move();}, speed);
-	};
+		return wormp;
+	}
 
 
 	// --- Other constructor tasks ---
 	
-	init(); // generate initial worm
-	this.draw(position, wormId); // draw the worm initially
+	priv.wormPositions = priv.generateWorm(); // generate initial worm
+
 }
+
+// Make it available outside this file
+module.exports = Worm;

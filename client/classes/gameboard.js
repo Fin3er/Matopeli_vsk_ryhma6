@@ -65,14 +65,14 @@ function GameBoard(width, height) {
 }
 
 
-// * Public method drawToBoard(params) [draws "anything" to the cells of the game] *
-// Params: array coords [{pos, cellType}]
+// * Public method drawToBoard(params) [draws "anything" to the cells of the gameboard] *
+// Params: positions in format {'x_y': cellType, 'x_y': cellType}
 // Returns: void
 
-GameBoard.prototype.drawToBoard = function(coords) {
+GameBoard.prototype.drawToBoard = function(positions) {
 
-	coords.data.forEach(function(coord) {
-		document.getElementById(coord.pos).className = global.gameboard.getCellTypes()[coord.cellType];
-	});
+	for (var pos in positions.data) {
+			document.getElementById(pos).className = global.gameboard.getCellTypes()[positions.data[pos]];
+	}
 	
-}
+};

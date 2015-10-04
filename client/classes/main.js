@@ -120,21 +120,33 @@ function Main() {
 
 		switch (state) {
 
+			case "running":
+
+				// Control buttons visibility
+			    document.getElementById("establishGame").style.display = "none";
+			    document.getElementById("removeGame").style.display = "none";
+			    document.getElementById("startGame").style.display = "none";
+			    document.getElementById("endGame").style.display = "inline-block";
+				document.getElementById("joinGame").style.display = "none";
+		    	document.getElementById("leaveGame").style.display = "none";
+				break;
+
 			case "established":
 
 				// Control buttons visibility
 			    document.getElementById("establishGame").style.display = "none";
 			    document.getElementById("removeGame").style.display = "inline-block";
-			    document.getElementById("startGame").style.display = "inline-block";
 			    document.getElementById("endGame").style.display = "none";
 
 			    if (global.myGameID == global.establishedGameID) {
 			    	// player has joined the game
+			    	document.getElementById("startGame").style.display = "inline-block";
 			    	document.getElementById("joinGame").style.display = "none";
 			    	document.getElementById("leaveGame").style.display = "inline-block";	
 			    }
 			    else {
 			    	// player hasn't joined the game
+			    	document.getElementById("startGame").style.display = "none";
 			    	document.getElementById("joinGame").style.display = "inline-block";
 			    	document.getElementById("leaveGame").style.display = "none";	
 			    }

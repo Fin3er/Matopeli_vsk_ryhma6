@@ -42,7 +42,7 @@ var WebSocketAPIHandler = (function (scope) {
 			// messages must be in format { request: validrequestname, data: object-or-string}
 			socket.on('message', function(msg) {
 
-				console.log("websockethandler received: " + JSON.stringify(msg));
+				console.log("received from client: " + JSON.stringify(msg));
 
 				switch (msg.request) {
 
@@ -83,7 +83,7 @@ var WebSocketAPIHandler = (function (scope) {
 						break;
 
 					case 'getGameState':
-						scope.gs.ws.getGameState(socket);
+						scope.gs.ws.getGameState();
 						break;
 
 					case 'errorMessage':
@@ -320,8 +320,8 @@ var WebSocketAPIHandler = (function (scope) {
 					// announce this to all clients
 	    			scope.gs.ws.broadcastMessage('gameStarted', {'gameID': data.gameID});
 	    			scope.gs.ws.publicChatMessage('<strong>Game Server:</strong> The game is started by user ' + socket.name + ". Play or die!");
-	    			// update also player interface
-	    			scope.gs.ws.setPlayerInfo(data.gameID);
+	    			// update also game state (+ playerinfo)
+	    			scope.gs.ws.getGameState();
 					break;
 
 				case "NOK":
@@ -371,22 +371,24 @@ var WebSocketAPIHandler = (function (scope) {
 		
 	}
 
-	// Method: getGameState (socket) - client asks the game state, so let's tell it
+	// Method: getGameState (socket) - somebody asks the game state, so let's set it to all clients
 	//
 	//
-	wsH.prototype.getGameState = function (socket) {
+	wsH.prototype.getGameState = function () {
 
 		scope.gs.getGameState(function(state, gameID) {
 			if (state == "error") {
-				scope.gs.ws.sendErrorMessage(socket, 'Unknown game state. Server is out of order.');
-				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': 'empty', 'gameID': ''});
+				scope.gs.ws.broadcastErrorMessage('Unknown game state. Server is out of order.');
+				scope.gs.ws.broadcastErrorMessage('setGameState', {'state': 'empty', 'gameID': ''});
 			}
 			else {
-				scope.gs.ws.sendMessage(socket, 'setGameState', {'state': state, 'gameID': gameID});
+				// set game state here, but only to one client
+				scope.gs.ws.broadcastMessage('setGameState', {'state': state, 'gameID': gameID});
 				scope.gs.ws.setPlayerInfo(gameID);
 			}
 		});
 	}
+
 
 	// Method: setPlayerInfo (socket, gameID) - provides player info of the game; this is mainly called from client with "getGameState" or "establishNewGame"
 	//
@@ -400,11 +402,11 @@ var WebSocketAPIHandler = (function (scope) {
 	}
 
 
-	// Method: drawToBoard (socket, data) - 
-	//
-	//
-	wsH.prototype.drawToBoard = function (coords) {
-		scope.gs.ws.broadcastMessage('drawToBoard', {'data': coords});
+	// Method: drawToBoard (params) - 
+	// Params: positions in format {'x_y': cellType, 'x_y': cellType}
+	// Return: void
+	wsH.prototype.drawToBoard = function (positions) {
+		scope.gs.ws.broadcastMessage('drawToBoard', {'data': positions});
 	}
 
 

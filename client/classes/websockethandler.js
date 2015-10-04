@@ -4,6 +4,8 @@ var socket = io.connect("http://localhost:8080/");
 
 socket.on("message", function(msg) {
 
+	console.log("received from server: " + JSON.stringify(msg));
+
 	switch (msg.request) {
 
 		case 'publicChatMessage':
