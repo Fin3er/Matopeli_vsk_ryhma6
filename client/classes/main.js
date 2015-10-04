@@ -66,10 +66,10 @@ function Main() {
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.startGame = function(gameID) {
+	global.startGame = function() {
 
 		// Start a new game object; read current gameboard size from global variables
-		socket.emit("message", { 'request': 'startGame', 'data': game});
+		socket.emit("message", { 'request': 'startGame', 'data': {'gameID': global.myGameID}});
 	}
 
 
@@ -78,10 +78,10 @@ function Main() {
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.endGame = function(gameID) {
+	global.endGame = function() {
 
 		// Start a new game object; read current gameboard size from global variables
-		socket.emit("message", { 'request': 'endGame', 'data': game});
+		socket.emit("message", { 'request': 'endGame', 'data': {'gameID': global.myGameID}});
 	}
 
 
@@ -102,10 +102,10 @@ function Main() {
 	// Return: void
 
 	//NOTE: must be global in order to work with the button
-	global.leaveGame = function(gameID) {
+	global.leaveGame = function() {
 
 		// Start a new game object; read current gameboard size from global variables
-		socket.emit("message", { 'request': 'leaveGame', 'data': game});
+		socket.emit("message", { 'request': 'leaveGame', 'data': {'gameID': global.myGameID}});
 	}
 
 

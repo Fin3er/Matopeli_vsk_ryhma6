@@ -312,6 +312,26 @@ var WebSocketAPIHandler = (function (scope) {
 	//
 	wsH.prototype.startGame = function (socket, data) {
 		
+		scope.gs.startGame(socket.name, data.gameID, function(result, data) {
+
+			switch (result) {
+
+				case "OK":
+					// announce this to all clients
+	    			scope.gs.ws.broadcastMessage('gameStarted', {'gameID': data.gameID});
+	    			scope.gs.ws.publicChatMessage('<strong>Game Server:</strong> The game is started by user ' + socket.name + ". Play or die!");
+	    			// update also player interface
+	    			scope.gs.ws.setPlayerInfo(data.gameID);
+					break;
+
+				case "NOK":
+				default:
+					// it failed, tell to establisher only
+					scope.gs.ws.sendErrorMessage(socket, data.error);
+					break;
+			}
+
+		});
 	}
 
 	// Method: endGame (socket, data) - client ends the game; ends established or started game
