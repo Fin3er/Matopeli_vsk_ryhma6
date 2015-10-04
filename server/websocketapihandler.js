@@ -251,7 +251,9 @@ var WebSocketAPIHandler = (function (scope) {
 	wsH.prototype.changeClientName = function (socket, data) {
 
 		// Replace old user name
+		scope.gs.ws.publicChatMessage(socket.name + " left chat!");
 	    socket.name = data.username;
+	    scope.gs.ws.publicChatMessage(socket.name + " joined chat!");
 
 	    // update user list to all connected clients
 	    scope.gs.ws.broadcastMessage('clientList', scope.gs.ws.getConnectedUsers());
