@@ -1,4 +1,7 @@
 {
+  "scripts": {
+  "start": "node server.js"
+},
   "name": "just-a-wormgame-prototype",
   "description" : "A multi-player worm game prototype by a student group from Karelia UAC",
   "version": "0.0.1",
