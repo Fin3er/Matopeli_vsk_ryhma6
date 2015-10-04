@@ -84,7 +84,7 @@ function Game(gameID, playerThatEstablishedTheGame) {
 
 
 	// * Privileged public method joinGame(player, callback) *
-	// params: object player
+	// params: object player, object callback
 	// return: OK/NOK
 	this.joinGame = function(player, callback) {
 
@@ -107,6 +107,19 @@ function Game(gameID, playerThatEstablishedTheGame) {
         // add player object to joined players array and call back home
         priv.joinedPlayers.push({'player': player, 'score': '0', 'status': 'alive', 'worm': 'worm_1'});
         callback("OK", this.getPlayerInfo());
+	}
+
+
+	// * Privileged public method startGame(callback) *
+	// params: object callback
+	// return: OK/NOK
+	this.startGame = function(callback) {
+
+		callback("OK", "");
+
+		// TODO
+		scope.gs.ws.drawToBoard([{'pos': '1_1', 'cellType': 'worm_1'}]);
+
 	}
 
 

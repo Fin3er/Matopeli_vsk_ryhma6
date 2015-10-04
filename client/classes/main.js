@@ -159,7 +159,7 @@ function Main() {
 	// --- Other constructor tasks ---
 
 	// Let's have some new dummy gameboard on the screen, before the game has begun and gameboard size is selected
-	new GameBoard(global.width, global.height);
+	global.gameboard = new GameBoard(global.width, global.height);
 
 	// Make triggers
     document.getElementById("establishGame").addEventListener('click', function() { global.establishNewGame(); });

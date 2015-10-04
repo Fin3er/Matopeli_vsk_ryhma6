@@ -80,6 +80,8 @@ var GameServer = (function () {
             else return result[0];
         };
 
+/* not in use, for some reason
+
         // privileged public method addPlayerToGame(username, game, callback) - add player to a game
         // params: object player, object game
         // return: object player
@@ -101,7 +103,7 @@ var GameServer = (function () {
 
             
         };
-
+*/
 
         // privileged public method establishNewGame(game) - establish a new game into system
         // params: object game
@@ -144,12 +146,29 @@ var GameServer = (function () {
             callback("OK", {'gameID': gameID});
         };
 
-        // privileged public method startGame(gameID) - start an established game
-        // params: object game
+        // privileged public method startGame(username, gameID, callback) - start an established game
+        // params: strin username, string GameID, object callback
         // return: void
-        this.gs.startGame = function(gameID) {
-            //TODO
-            console.log('we are here');
+        this.gs.startGame = function(username, gameID, callback) {
+
+            //TODO check here, is username a joined member of the game
+
+            var game = scope.gs.getGame(gameID);
+            console.log('game2'+game.getID());
+
+            if (game == null) {
+                callback("NOK", {'error': "Can't add player to the game, because game with that ID "+gameID+"doesn't found."});
+                return;
+            }
+
+            game.startGame(function (result, data) {
+                //TODO incomplete feature
+
+                if (result == "OK") {
+                    callback("OK", {'gameID': gameID});
+                }
+            });
+            
         }
 
 

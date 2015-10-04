@@ -399,6 +399,15 @@ var WebSocketAPIHandler = (function (scope) {
 		// if it was null, we don't care this time
 	}
 
+
+	// Method: drawToBoard (socket, data) - 
+	//
+	//
+	wsH.prototype.drawToBoard = function (coords) {
+		scope.gs.ws.broadcastMessage('drawToBoard', {'data': coords});
+	}
+
+
 	// Initialize the module
     var wsh = new wsH();
 

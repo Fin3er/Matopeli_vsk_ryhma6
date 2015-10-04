@@ -54,17 +54,5 @@ function Player(username) {
 };
 
 
-Player.prototype.establishGame = function () {
-
-
-};
-
-
-Player.prototype.applyToJoinGame = function () {
-
-
-};
-
-
 // Make it available outside this file
 module.exports = Player;

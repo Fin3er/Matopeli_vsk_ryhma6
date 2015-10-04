@@ -26,6 +26,10 @@ socket.on("message", function(msg) {
 			setPlayerInfo(msg.data);
 			break;
 
+		case 'drawToBoard':
+			global.gameboard.drawToBoard(msg.data);
+			break;
+
 		case 'errorMessage':
 			console.log("Received an error websocket message from the server: " + JSON.stringify(msg.data));
 			break;
