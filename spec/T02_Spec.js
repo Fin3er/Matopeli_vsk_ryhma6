@@ -25,6 +25,53 @@ describe("T02: User registration to database with parameters from valid equivale
 		scope.algorithm = 'aes-256-ctr';
 		scope.passphrase = 'ffg66dfsd4f';
 
+		// common for all tests
+		scope.testResponse = function(res) {
+			var str = '';
+
+			//another chunk of data has been recieved, so append it to `str`
+			res.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			//the whole response has been recieved, so we just print it out here
+			res.on('end', function () {
+				data = JSON.parse(str);
+				expect(data.response).toEqual("OK")
+				scope.finished = true;
+			});
+
+			res.on('error', function(err) {
+	    		scope.theresNoErrors = false;
+	    		scope.finished = true;
+			});
+		};
+
+		scope.getOptions = function (un, pw) {
+  			return {
+		    host: '127.0.0.1',
+		    port: 8080,
+		    path: '/api/user/register?username='+un+'&password='+pw,
+		    method: 'GET'
+			}
+		};
+
+		// we need to wait for numerous async loops to finish, otherwise we'll get wrong expectations
+  		// couldn't find any other way to do this with Jasmine?!?
+		scope.startWaiting = function (done) {
+			var waiting = setInterval(function () {
+				if (scope.finished) {
+
+					// there shouldn't be a request error
+		  			expect(scope.theresNoErrors).toBe(true);
+
+		  			done();		
+					clearInterval(waiting);
+				}
+			}, 100)
+		};
+
+
     	/* === set up mysql server === */
 
     	scope.mysql = require('mysql');
@@ -59,70 +106,24 @@ describe("T02: User registration to database with parameters from valid equivale
   	// ---------------------------------
 
 
-  	it("has returned correct respond that registration was successful", function (done) {
+	it("username length 4 valid characters, password length 16 valid characters", function (done) {
 
-  		scope.requestsToFinish = 2;
-  		scope.theresNoErrors = true;
+		scope.theresNoErrors = true;
+  		scope.finished = false;
+  		scope.http.request(scope.getOptions(scope.testdata.un1, scope.testdata.pw1), scope.testResponse).end(); 		
+  		scope.startWaiting(done);
 
-
-		var callback = function(res) {
-			var str = '';
-
-			//another chunk of data has been recieved, so append it to `str`
-			res.on('data', function (chunk) {
-				str += chunk;
-			});
-
-			//the whole response has been recieved, so we just print it out here
-			res.on('end', function () {
-				data = JSON.parse(str);
-				expect(data.response).toEqual("OK")
-				scope.requestsToFinish--;
-			});
-
-			res.on('error', function(err) {
-	    		scope.theresNoErrors = false;
-	    		scope.requestsToFinish--;
-			});
-		};
+	});
 
 
-  		var getOptions = function (un, pw) {
-  			return {
-		    host: '127.0.0.1',
-		    port: 8080,
-		    path: '/api/user/register?username='+un+'&password='+pw,
-		    method: 'GET'
-			}
-		};
+	it("username length 16 valid characters, password length 8 valid characters", function (done) {
+		
+		scope.theresNoErrors = true;
+  		scope.finished = false;
+  		scope.http.request(scope.getOptions(scope.testdata.un2, scope.testdata.pw2), scope.testResponse).end();
+  		scope.startWaiting(done);
 
-
-		// #1 make request of username length 4 valid characters, password length 16 valid characters
-
-		scope.http.request(getOptions(scope.testdata.un1, scope.testdata.pw1), callback).end();
-
-
-		// #2 make request of username length 16 valid characters, password length 8 valid characters
-
-		scope.http.request(getOptions(scope.testdata.un2, scope.testdata.pw2), callback).end();
-
-
-		// we need to wait for numerous async loops to finish, otherwise we'll get wrong expectations
-  		// couldn't find any other way to do this with Jasmine?!?
-		var waiting = setInterval(function () {
-
-			if (scope.requestsToFinish <= 0) {
-
-				// there shouldn't be a request error
-		  		expect(scope.theresNoErrors).toBe(true);
-
-		  		done();
-				
-				clearInterval(waiting);
-			}
-		}, 100);	
-  		
-    });
+	});
 
 
     it("has all registered usernames in database", function (done) {
@@ -144,8 +145,9 @@ describe("T02: User registration to database with parameters from valid equivale
   		
     });
 
+
     // NOTE: this spec must run after "has all registered usernames in database"
-    it("has encrypted passwords in database that match with test passwords if decrypted", function (done) {
+    it("has encrypted passwords in database that match with encrypted test passwords", function (done) {
 
     	var crypted;
 
