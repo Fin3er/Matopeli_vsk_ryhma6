@@ -32,7 +32,7 @@ describe("T08: User login with invalid username or password", function (done) {
 			{un: scope.un2, pw: scope.pw1},
 			{un: scope.un1, pw: longdata},
 			{un: scope.un1+'%20or%201%3D1', pw: scope.pw1},
-			{un: ')%20or%20true--', pw: '18cY27dW'}
+			{un: "')%20or%20true--", pw: '18cY27dW'}
 		];
 
 		//generate testdata username list that can be used with sql queries
@@ -138,6 +138,8 @@ describe("T08: User login with invalid username or password", function (done) {
 
 
   	it(": register test username 1", function (done) {
+
+  		// NOTE: shouldn't tested here -> move to beforeAll
   		
   		scope.theresNoErrors = true;
   		scope.finished = false;
@@ -149,6 +151,8 @@ describe("T08: User login with invalid username or password", function (done) {
     });
 
     it(": register test username 2", function (done) {
+
+    	// NOTE: shouldn't tested here -> move to beforeAll
   		
   		scope.theresNoErrors = true;
   		scope.finished = false;
