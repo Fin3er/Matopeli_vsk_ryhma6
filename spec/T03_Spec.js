@@ -225,13 +225,13 @@ describe("T03: User registration to database with parameters from invalid equiva
 
     it(": none of the tested usernames were found from database", function (done) {
 
-    	var queryString = "SELECT * from users where username='"+scope.testdata.un1+"' OR username='"+scope.testdata.un2+"'";
+    	var queryString = "SELECT * from users where "+scope.sqlUsernames;
 
 		scope.connection.query(queryString, function (err, rows, fields) {
 
 			if (err) console.log(err);
 
-			// there should be 2 users with this query
+			// there should be 0 users with this query
 			expect(rows.length).toEqual(0);
 
 			done();
