@@ -18,7 +18,7 @@ describe("T03: User registration to database with parameters from invalid equiva
 			{un: 'aZ48', pw: 'bX18cY27dW38eV460'},
 			{un: 'aZ09fU54gT63hS73', pw: 'bX18cY2'},
 			{un: 'aZ-8', pw: 'bX18cY27dW38eV46'},
-			{un: 'aZ09fU54gT63hS74', pw: 'bX18cY27'},
+			{un: 'aZ09fU54gT63hS74', pw: 'bX18c-27'},
 			{un: 'a-0', pw: 'bX18cY27dW38eV46'},
 			{un: 'aZ4o', pw: 'bX18_Y27dW38-V43r'},
 			{un: 'aZ0-', pw: 'bX18_Y27dW38-V46'},
