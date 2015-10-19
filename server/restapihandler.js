@@ -33,6 +33,20 @@ var RestAPIHandler = (function (scope) {
 			}
         }
 
+        scope.validateUsername = function (un) {
+        	if (un.length >= 4 && un.length <= 16) {
+        		return /^[a-zA-Z0-9]*$/.test(un);
+        	}
+        	return false;
+        }
+
+        scope.validatePassword = function (pw) {
+        	if (pw.length >= 8 && pw.length <= 16) {
+        		return /^[a-zA-Z0-9]*$/.test(pw);
+        	}
+        	return false;
+        }
+
 
 		/*	=================================
 			   API: user
@@ -69,6 +83,11 @@ var RestAPIHandler = (function (scope) {
 		priv.uname = req.query['username'];
 		priv.pass = req.query['password'];
 
+		if (!(validateUsername(priv.uname) && validatePassword(priv.pass))) {
+			res.send(scope.restResNOK("Login failed. Username or password contained invalid characters (other than a-z, A-Z, 0-9) or was too short or long."));
+			return;
+		}
+
 		// TODO: login user with the game too ;)
 
 		scope.gs.db.checkUserPassword(priv.uname, priv.pass, res, function (dbr, res) {
@@ -103,7 +122,11 @@ var RestAPIHandler = (function (scope) {
 
 		if (priv.pass == "" || priv.uname == "") {
 			res.send(scope.restResNOK("Username / password can't be empty!"));
-			//res.end();  // not necessary to call, as res.send() calls it!
+		}
+
+		if (!(validateUsername(priv.uname) && validatePassword(priv.pass))) {
+			res.send(scope.restResNOK("Login failed. Username or password contained invalid characters (other than a-z, A-Z, 0-9) or was too short or long."));
+			return;
 		}
 
 		else {
